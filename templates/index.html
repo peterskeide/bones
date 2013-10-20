@@ -1,0 +1,13 @@
+<a href="/signup">Signup</a>
+
+<h2>Users</h2>
+
+{{template "errors.html" .}}
+
+<ul>
+	{{range .Users}}
+		<li>{{.Email}}</li>
+	{{else}}
+		<p>There are no users yet</p>
+	{{end}}
+</ul>

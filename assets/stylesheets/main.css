@@ -1,0 +1,25 @@
+fieldset {
+	padding: 0;
+	border: 0;
+	margin-bottom: 20px;
+}
+
+label {
+	display: block;
+	padding: 5px 0 5px 0;
+}
+
+.input-medium {
+	width: 300px;
+	font-size: 16px;
+	padding: 4px;
+}
+
+.label-required:after {
+	content: " *";
+	color: red;
+}
+
+#errors {
+	color: red;
+}
