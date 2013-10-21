@@ -7,18 +7,12 @@ import (
 
 var decoder = schema.NewDecoder()
 
-// Will panic if error
-func DecodeForm(form interface{}, req *http.Request) {
+func DecodeForm(form interface{}, req *http.Request) error {
 	err := req.ParseForm()
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	err = decoder.Decode(form, req.PostForm)
-
-	if err != nil {
-		panic(err)
-	}
+	return decoder.Decode(form, req.PostForm)
 }
-
