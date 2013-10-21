@@ -14,7 +14,7 @@ type HomeContext struct {
 	Users []entities.User
 }
 
-func HomeHandler(res http.ResponseWriter, req *http.Request) {
+func LoadHomePage(res http.ResponseWriter, req *http.Request) {
 	ctx := HomeContext{newBaseContext("index.html"), nil}
 
 	users, err := repositories.Users().All()

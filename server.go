@@ -27,5 +27,5 @@ func main() {
 func setupRouting(r *pat.Router) {
 	r.Get("/signup", handlers.LoadSignupPage)
 	r.Post("/signup", handlers.CreateNewUser)
-	r.Get("/", handlers.HomeHandler)
+	r.Get("/", handlers.LoadHomePage)
 }
