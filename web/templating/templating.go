@@ -75,8 +75,6 @@ type reloadingTemplateRenderer struct{}
 func (r reloadingTemplateRenderer) RenderTemplate(wr io.Writer, ctx TemplateContext) error {
 	templates, err := template.ParseGlob("./templates/*.html")
 
-	templates.Funcs(funcMap)
-
 	if err != nil {
 		return err
 	}
