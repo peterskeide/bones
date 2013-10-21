@@ -22,4 +22,3 @@ func DecodeForm(form interface{}, req *http.Request) {
 	}
 }
 
-type query map[string]interface{}
