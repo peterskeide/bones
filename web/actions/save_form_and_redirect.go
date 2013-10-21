@@ -15,29 +15,33 @@ type SaveFormAndRedirect struct {
 }
 
 func (wf SaveFormAndRedirect) Run() {
-	forms.DecodeForm(wf.Form, wf.Request)
-
-	err := wf.Form.Validate()
-
-	if err != nil {
-		wf.renderError(err)
-	} else {
-		err = wf.Form.Save()
-
-		if err != nil {
-			wf.renderError(err)
-			return
-		}
-
-		http.Redirect(wf.ResponseWriter, wf.Request, wf.SuccessUrl, 302)
+	if err := forms.DecodeForm(wf.Form, wf.Request); wf.renderError(err) {
+		return
 	}
+
+	if err := wf.Form.Validate(); wf.renderError(err) {
+		return
+	}
+
+	if err := wf.Form.Save(); wf.renderError(err) {
+		return
+	}
+
+	http.Redirect(wf.ResponseWriter, wf.Request, wf.SuccessUrl, 302)
 }
 
-func (wf SaveFormAndRedirect) renderError(err error) {
-	wf.ErrorContext.AddError(err)
-	renderErr := templating.RenderTemplate(wf.ResponseWriter, wf.ErrorContext)
+func (wf SaveFormAndRedirect) renderError(err error) bool {
+	if err != nil {
+		wf.ErrorContext.AddError(err)
 
-	if renderErr != nil {
-		logTemplateRenderingErrorAndRespond500(wf.ResponseWriter, renderErr, wf.ErrorContext)
+		renderErr := templating.RenderTemplate(wf.ResponseWriter, wf.ErrorContext)
+
+		if renderErr != nil {
+			logTemplateRenderingErrorAndRespond500(wf.ResponseWriter, renderErr, wf.ErrorContext)
+		}
+
+		return true
 	}
+
+	return false
 }
