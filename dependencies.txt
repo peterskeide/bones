@@ -1,0 +1,3 @@
+github.com/gorilla/pat
+github.com/gorilla/schema
+code.google.com/p/go.crypto/bcrypt
