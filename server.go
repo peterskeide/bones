@@ -13,9 +13,7 @@ func main() {
 	repositories.Connect(config.Database())
 	defer repositories.Cleanup()
 
-	r := pat.New()
-
-	setupRouting(r)
+	r := setupRouting()
 
 	http.Handle("/", r)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
@@ -25,8 +23,12 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-func setupRouting(r *pat.Router) {
+func setupRouting() *pat.Router {
+	r := pat.New()
+
 	r.Get("/signup", handlers.LoadSignupPage)
 	r.Post("/signup", handlers.CreateNewUser)
 	r.Get("/", handlers.LoadHomePage)
+
+	return r
 }
