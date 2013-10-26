@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bones/config"
 	"bones/repositories"
 	"bones/web/handlers"
 	"github.com/gorilla/pat"
@@ -9,7 +10,7 @@ import (
 )
 
 func main() {
-	repositories.Connect("localhost", "bones")
+	repositories.Connect(config.Database())
 	defer repositories.Cleanup()
 
 	r := pat.New()

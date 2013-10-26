@@ -1,0 +1,18 @@
+development:
+  user: youruser
+  name:: bones_development
+  password:
+  host: localhost
+  port: 5432
+  sslmode: disable
+
+test:
+  user: youruser
+  name:: bones_test
+  password:
+  host: localhost
+  port: 5432
+  sslmode: disable
+
+production:
+  host: heroku

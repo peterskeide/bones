@@ -24,7 +24,7 @@ func (f *SignupForm) Validate() error {
 }
 
 func (f *SignupForm) Save() error {
-	_, err := repositories.Users().FindByEmail(f.Email)
+	_, err := repositories.Users.FindByEmail(f.Email)
 
 	if err != nil {
 		if err == repositories.NotFoundError {
@@ -46,5 +46,5 @@ func (f *SignupForm) saveNewUser() error {
 		return err
 	}
 
-	return repositories.Users().Insert(&user)
+	return repositories.Users.Insert(&user)
 }

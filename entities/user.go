@@ -5,13 +5,9 @@ import (
 )
 
 type User struct {
-	Id       string
+	Id       int
 	Email    string
 	Password string
-}
-
-func (u User) CollectionName() string {
-	return "users"
 }
 
 func (u *User) SetPassword(password string) error {

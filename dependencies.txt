@@ -1,3 +1,5 @@
-github.com/gorilla/pat
+launchpad.net/goyaml
+github.com/lib/pq
 github.com/gorilla/schema
+github.com/gorilla/pat
 code.google.com/p/go.crypto/bcrypt

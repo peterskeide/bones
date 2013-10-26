@@ -1,29 +1,34 @@
 package repositories
 
 import (
-	"labix.org/v2/mgo"
+	"bones/config"
+	"database/sql"
+	_ "github.com/lib/pq"
 	"log"
 )
 
-var session *mgo.Session
-var database string
+var db *sql.DB
 
-var NotFoundError = mgo.ErrNotFound
+var NotFoundError = sql.ErrNoRows
 
-func Connect(connInfo string, db string) {
-	database = db
-
+func Connect(dbconfig config.DatabaseConfig) {
 	var err error
-	session, err = mgo.Dial(connInfo)
+	db, err = sql.Open("postgres", dbconfig.ConnectionString())
 
 	if err != nil {
 		panic(err)
 	}
 
-	log.Printf("Connected to MongoDB database '%s' on %s\n", db, connInfo)
+	err = db.Ping()
+
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("Connected to database")
 }
 
 func Cleanup() {
-	session.Close()
-	log.Println("Closed mgo session")
+	db.Close()
+	log.Println("Closed database connection")
 }
