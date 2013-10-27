@@ -18,11 +18,7 @@ func exec(sql string, params ...interface{}) error {
 
 	_, err = stmt.Exec(params...)
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func queryRow(rc rowCollector, sql string, params ...interface{}) error {
@@ -35,13 +31,7 @@ func queryRow(rc rowCollector, sql string, params ...interface{}) error {
 
 	row := stmt.QueryRow(params...)
 
-	err = rc.collectRow(row)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return rc.collectRow(row)
 }
 
 func query(rc rowCollector, sql string, params ...interface{}) error {
