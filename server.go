@@ -26,6 +26,10 @@ func main() {
 func setupRouting() *pat.Router {
 	r := pat.New()
 
+	handlers.SetRouter(r)
+
+	r.Get("/users/{id:[0-9]+}/profile", handlers.LoadUserProfilePage).Name("userProfile")
+
 	r.Get("/signup", handlers.LoadSignupPage)
 	r.Post("/signup", handlers.CreateNewUser)
 
