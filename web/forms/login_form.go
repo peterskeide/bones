@@ -6,7 +6,6 @@ import (
 	"bones/validation"
 	"code.google.com/p/go.crypto/bcrypt"
 	"errors"
-	"log"
 	"net/http"
 )
 
@@ -35,18 +34,15 @@ func (f *LoginForm) Save() error {
 
 	if err != nil {
 		if err == repositories.NotFoundError {
-			log.Println("User not found")
 			return LoginFailedError
 		}
 
-		log.Println("Repository error:", err)
 		return err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(f.User.Password), []byte(f.Password))
 
 	if err != nil {
-		log.Println("Passwords didn't match")
 		return err
 	}
 
