@@ -16,7 +16,6 @@ type HomeContext struct {
 
 func LoadHomePage(res http.ResponseWriter, req *http.Request) {
 	ctx := HomeContext{newBaseContext("index.html"), nil}
-
 	users, err := repositories.Users.All()
 
 	if err != nil {
@@ -26,7 +25,5 @@ func LoadHomePage(res http.ResponseWriter, req *http.Request) {
 		ctx.Users = users
 	}
 
-	(actions.RenderPage{
-		ResponseWriter: res,
-		PageContext:    ctx}).Run()
+	actions.RenderPage(res, ctx)
 }

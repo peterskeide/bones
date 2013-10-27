@@ -1,0 +1,14 @@
+<h2>Login</h2>
+
+{{template "errors.html" .}}
+
+<form action="/login" method="post">
+	<fieldset>
+		<label for="email" class="label-required">Email</label>
+		<input type="email" id="email" name="email" class="input-medium">
+		<label for="password" class="label-required">Password</label>
+		<input type="password" id="password" name="password" class="input-medium">
+	</fieldset>
+
+	<input type="submit" value="Login">
+</form>

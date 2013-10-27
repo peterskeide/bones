@@ -7,18 +7,21 @@ import (
 )
 
 func LoadSignupPage(res http.ResponseWriter, req *http.Request) {
-	(actions.RenderPage{
-		ResponseWriter: res,
-		PageContext:    newSignupContext()}).Run()
+	actions.RenderPage(res, newSignupContext())
 }
 
 func CreateNewUser(res http.ResponseWriter, req *http.Request) {
-	(actions.SaveFormAndRedirect{
-		ResponseWriter: res,
-		Request:        req,
-		Form:           new(forms.SignupForm),
-		SuccessUrl:     "/",
-		ErrorContext:   newSignupContext()}).Run()
+	err := actions.ProcessForm(req, new(forms.SignupForm))
+
+	if err != nil {
+		ctx := newSignupContext()
+		ctx.AddError(err)
+		actions.RenderPage(res, ctx)
+
+		return
+	}
+
+	http.Redirect(res, req, "/", 302)
 }
 
 func newSignupContext() *BaseContext {

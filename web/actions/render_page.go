@@ -2,18 +2,15 @@ package actions
 
 import (
 	"bones/web/templating"
+	"log"
 	"net/http"
 )
 
-type RenderPage struct {
-	ResponseWriter http.ResponseWriter
-	PageContext    templating.TemplateContext
-}
-
-func (wf RenderPage) Run() {
-	err := templating.RenderTemplate(wf.ResponseWriter, wf.PageContext)
+func RenderPage(res http.ResponseWriter, pageContext templating.TemplateContext) {
+	err := templating.RenderTemplate(res, pageContext)
 
 	if err != nil {
-		logTemplateRenderingErrorAndRespond500(wf.ResponseWriter, err, wf.PageContext)
+		log.Println("Error when rendering template:", err, ". Context:", pageContext)
+		http.Error(res, "Server encountered an error", 500)
 	}
 }
