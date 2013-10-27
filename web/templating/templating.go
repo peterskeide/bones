@@ -1,10 +1,10 @@
 package templating
 
 import (
+	"bones/config"
 	"html/template"
 	"io"
 	"log"
-	"os"
 )
 
 var templates *template.Template
@@ -35,7 +35,7 @@ func SetTemplateRenderer(tr TemplateRenderer) {
 }
 
 func initTemplateRenderer() {
-	if os.Getenv("environment") == "production" {
+	if config.Env().IsProduction() {
 		currentTemplateRenderer = &cachingTemplateRenderer{templates}
 		return
 	}

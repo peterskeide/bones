@@ -32,7 +32,9 @@ func Database() DatabaseConfig {
 		initDatabaseConfig()
 	}
 
-	switch getEnv() {
+	env := Env().String()
+
+	switch env {
 	case "development":
 		return databaseEnvironments.Development
 	case "test":
