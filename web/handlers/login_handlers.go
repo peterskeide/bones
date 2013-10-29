@@ -35,8 +35,7 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 }
 
 func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
-	idStr := req.URL.Query().Get(":id")
-	id, err := strconv.Atoi(idStr)
+	id, err := queryParamInt(req, "id")
 
 	if err != nil {
 		http.NotFound(res, req)
