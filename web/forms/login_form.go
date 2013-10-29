@@ -43,7 +43,7 @@ func (f *LoginForm) Save() error {
 	err = bcrypt.CompareHashAndPassword([]byte(f.User.Password), []byte(f.Password))
 
 	if err != nil {
-		return err
+		return LoginFailedError
 	}
 
 	// TODO save session to repository, update cookie in action
