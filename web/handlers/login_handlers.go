@@ -30,7 +30,7 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	url := getRouteURL("userProfile", "id", strconv.Itoa(form.User.Id))
+	url := routeURL("userProfile", "id", strconv.Itoa(form.User.Id))
 	http.Redirect(res, req, url, 302)
 }
 

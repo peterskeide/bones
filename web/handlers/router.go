@@ -14,7 +14,7 @@ func SetRouter(r *pat.Router) {
 // caused by incorrectly configured routes or an incorrect
 // routeName, so panic to ensure these errors do not
 // go unnoticed
-func getRouteURL(routeName string, urlArgs ...string) string {
+func routeURL(routeName string, urlArgs ...string) string {
 	url, err := router.GetRoute(routeName).URL(urlArgs...)
 
 	if err != nil {
