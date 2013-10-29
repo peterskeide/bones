@@ -23,9 +23,7 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 	err := actions.ProcessForm(req, form)
 
 	if err != nil {
-		ctx := newLoginContext()
-		ctx.AddError(err)
-		actions.RenderPage(res, ctx)
+		actions.RenderPageWithErrors(res, newLoginContext(), err)
 
 		return
 	}

@@ -14,9 +14,7 @@ func CreateNewUser(res http.ResponseWriter, req *http.Request) {
 	err := actions.ProcessForm(req, new(forms.SignupForm))
 
 	if err != nil {
-		ctx := newSignupContext()
-		ctx.AddError(err)
-		actions.RenderPage(res, ctx)
+		actions.RenderPageWithErrors(res, newSignupContext(), err)
 
 		return
 	}
