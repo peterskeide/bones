@@ -36,7 +36,7 @@ func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
 	id, err := pathParamInt(req, "id")
 
 	if err != nil {
-		http.NotFound(res, req)
+		actions.Render404(res, req)
 
 		return
 	}
@@ -44,7 +44,7 @@ func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
 	user, err := repositories.Users.FindById(id)
 
 	if err != nil {
-		http.NotFound(res, req)
+		actions.Render404(res, req)
 
 		return
 	}
