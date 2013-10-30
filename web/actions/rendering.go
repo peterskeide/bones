@@ -23,18 +23,8 @@ func RenderPageWithErrors(res http.ResponseWriter, pageContext templating.Templa
 	RenderPage(res, pageContext)
 }
 
-type NotFoundContext struct{}
-
-func (ctx *NotFoundContext) AddError(error) {}
-
-func (ctx *NotFoundContext) AddNotice(string) {}
-
-func (ctx NotFoundContext) Name() string {
-	return "404.html"
-}
-
 func Render404(res http.ResponseWriter, req *http.Request) {
-	err := templating.RenderTemplate(res, new(NotFoundContext))
+	err := templating.RenderTemplate(res, templating.NewBaseContext("404.html"))
 
 	if err != nil {
 		log.Println("Error when rendering 404 template:", err)

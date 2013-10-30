@@ -1,4 +1,4 @@
-package handlers
+package templating
 
 import (
 	"bones/validation"
@@ -10,7 +10,7 @@ type BaseContext struct {
 	Notices      []string
 }
 
-func newBaseContext(templateName string) *BaseContext {
+func NewBaseContext(templateName string) *BaseContext {
 	return &BaseContext{TemplateName: templateName}
 }
 

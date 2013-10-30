@@ -4,18 +4,19 @@ import (
 	"bones/entities"
 	"bones/repositories"
 	"bones/web/actions"
+	"bones/web/templating"
 	"errors"
 	"log"
 	"net/http"
 )
 
 type HomeContext struct {
-	*BaseContext
+	*templating.BaseContext
 	Users []entities.User
 }
 
 func LoadHomePage(res http.ResponseWriter, req *http.Request) {
-	ctx := HomeContext{newBaseContext("index.html"), nil}
+	ctx := HomeContext{templating.NewBaseContext("index.html"), nil}
 	users, err := repositories.Users.All()
 
 	if err != nil {

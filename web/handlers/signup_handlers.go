@@ -3,6 +3,7 @@ package handlers
 import (
 	"bones/web/actions"
 	"bones/web/forms"
+	"bones/web/templating"
 	"net/http"
 )
 
@@ -22,6 +23,6 @@ func CreateNewUser(res http.ResponseWriter, req *http.Request) {
 	http.Redirect(res, req, "/", 302)
 }
 
-func newSignupContext() *BaseContext {
-	return newBaseContext("signup.html")
+func newSignupContext() *templating.BaseContext {
+	return templating.NewBaseContext("signup.html")
 }

@@ -5,12 +5,13 @@ import (
 	"bones/repositories"
 	"bones/web/actions"
 	"bones/web/forms"
+	"bones/web/templating"
 	"net/http"
 	"strconv"
 )
 
 type ProfileContext struct {
-	*BaseContext
+	*templating.BaseContext
 	User *entities.User
 }
 
@@ -49,10 +50,10 @@ func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ctx := ProfileContext{newBaseContext("profile.html"), user}
+	ctx := ProfileContext{templating.NewBaseContext("profile.html"), user}
 	actions.RenderPage(res, &ctx)
 }
 
-func newLoginContext() *BaseContext {
-	return newBaseContext("login.html")
+func newLoginContext() *templating.BaseContext {
+	return templating.NewBaseContext("login.html")
 }
