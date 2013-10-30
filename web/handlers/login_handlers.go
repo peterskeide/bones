@@ -33,7 +33,7 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 }
 
 func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
-	id, err := queryParamInt(req, "id")
+	id, err := pathParamInt(req, "id")
 
 	if err != nil {
 		http.NotFound(res, req)
