@@ -5,6 +5,7 @@ import (
 )
 
 type UserRepository interface {
+	EntityFinder
 	Insert(user *entities.User) error
 	FindByEmail(email string) (*entities.User, error)
 	FindById(id int) (*entities.User, error)
@@ -29,6 +30,10 @@ func (r SqlUserRepository) FindById(id int) (*entities.User, error) {
 	rc := new(usersRowCollector)
 	err := queryRow(rc, "SELECT * FROM users WHERE id = $1 LIMIT 1", id)
 	return rc.firstOrErr(err)
+}
+
+func (r SqlUserRepository) Find(id int) (interface{}, error) {
+	return r.FindById(id)
 }
 
 func (r SqlUserRepository) All() ([]entities.User, error) {

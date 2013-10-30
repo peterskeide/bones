@@ -32,3 +32,7 @@ func Cleanup() {
 	db.Close()
 	log.Println("Closed database connection")
 }
+
+type EntityFinder interface {
+	Find(id int) (interface{}, error)
+}

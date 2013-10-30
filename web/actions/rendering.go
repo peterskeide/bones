@@ -1,9 +1,15 @@
 package actions
 
 import (
+	"bones/repositories"
 	"bones/web/templating"
 	"log"
 	"net/http"
+	"strconv"
+)
+
+const (
+	serverError string = "Server encountered an error"
 )
 
 func RenderPage(res http.ResponseWriter, pageContext templating.TemplateContext) {
@@ -11,7 +17,7 @@ func RenderPage(res http.ResponseWriter, pageContext templating.TemplateContext)
 
 	if err != nil {
 		log.Println("Error when rendering template:", err, ". Context:", pageContext)
-		http.Error(res, "Server encountered an error", 500)
+		http.Error(res, serverError, 500)
 	}
 }
 
@@ -30,4 +36,30 @@ func Render404(res http.ResponseWriter, req *http.Request) {
 		log.Println("Error when rendering 404 template:", err)
 		http.NotFound(res, req)
 	}
+}
+
+func FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, idParamName string) interface{} {
+	idStr := req.URL.Query().Get(idParamName)
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		Render404(res, req)
+
+		return nil
+	}
+
+	entity, err := ef.Find(id)
+
+	if err != nil {
+		if err == repositories.NotFoundError {
+			Render404(res, req)
+		} else {
+			log.Println("Error on entity find:", err)
+			http.Error(res, serverError, 500)
+		}
+
+		return nil
+	}
+
+	return entity
 }

@@ -34,24 +34,12 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 }
 
 func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
-	id, err := pathParamInt(req, "id")
+	entity := actions.FindEntityOr404(res, req, repositories.Users, ":id")
 
-	if err != nil {
-		actions.Render404(res, req)
-
-		return
+	if user, ok := entity.(*entities.User); ok {
+		ctx := ProfileContext{templating.NewBaseContext("profile.html"), user}
+		actions.RenderPage(res, &ctx)
 	}
-
-	user, err := repositories.Users.FindById(id)
-
-	if err != nil {
-		actions.Render404(res, req)
-
-		return
-	}
-
-	ctx := ProfileContext{templating.NewBaseContext("profile.html"), user}
-	actions.RenderPage(res, &ctx)
 }
 
 func newLoginContext() *templating.BaseContext {
