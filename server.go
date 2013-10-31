@@ -27,10 +27,11 @@ func main() {
 }
 
 func setupRouting() *pat.Router {
-	r := filters.NewRequestFilterChain()
-	handlers.SetRouter(r.Router)
+	r := pat.New()
+	filters.SetRouter(r)
+	handlers.SetRouter(r)
 
-	r.Get("/users/{id:[0-9]+}/profile", handlers.LoadUserProfilePage, filters.Authenticate).Name("userProfile")
+	filters.Get("/users/{id:[0-9]+}/profile", handlers.LoadUserProfilePage, filters.Authenticate).Name("userProfile")
 
 	r.Get("/signup", handlers.LoadSignupPage)
 	r.Post("/signup", handlers.CreateNewUser)
@@ -41,5 +42,5 @@ func setupRouting() *pat.Router {
 
 	r.Get("/", handlers.LoadHomePage)
 
-	return r.Router
+	return r
 }
