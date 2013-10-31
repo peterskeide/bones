@@ -42,6 +42,13 @@ func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func Logout(res http.ResponseWriter, req *http.Request) {
+	session := repositories.Session(res, req)
+	session.Clear()
+
+	http.Redirect(res, req, "/login", 302)
+}
+
 func newLoginContext() *templating.BaseContext {
 	return templating.NewBaseContext("login.html")
 }
