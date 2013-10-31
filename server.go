@@ -3,6 +3,7 @@ package main
 import (
 	"bones/config"
 	"bones/repositories"
+	"bones/web/filters"
 	"bones/web/handlers"
 	"github.com/gorilla/pat"
 	"log"
@@ -26,9 +27,8 @@ func main() {
 }
 
 func setupRouting() *pat.Router {
-	r := pat.New()
-
-	handlers.SetRouter(r)
+	r := filters.NewRequestFilterChain()
+	handlers.SetRouter(r.Router)
 
 	r.Get("/users/{id:[0-9]+}/profile", handlers.LoadUserProfilePage).Name("userProfile")
 
@@ -41,5 +41,5 @@ func setupRouting() *pat.Router {
 
 	r.Get("/", handlers.LoadHomePage)
 
-	return r
+	return r.Router
 }
