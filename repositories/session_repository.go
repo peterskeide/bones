@@ -41,6 +41,7 @@ type SessionRepository interface {
 	Value(key string) interface{}
 	SetValue(key string, value interface{})
 	Save() error
+	Clear()
 }
 
 func Session(res http.ResponseWriter, req *http.Request) SessionRepository {
@@ -64,4 +65,8 @@ func (s *CookieSessionRepository) SetValue(key string, value interface{}) {
 
 func (s *CookieSessionRepository) Save() error {
 	return s.session.Save(s.request, s.responseWriter)
+}
+
+func (s *CookieSessionRepository) Clear() {
+	s.session.Values = nil
 }
