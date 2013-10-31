@@ -6,6 +6,7 @@ import (
 	"bones/web/actions"
 	"bones/web/forms"
 	"bones/web/templating"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -44,7 +45,11 @@ func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
 
 func Logout(res http.ResponseWriter, req *http.Request) {
 	session := repositories.Session(res, req)
-	session.Clear()
+	err := session.Clear()
+
+	if err != nil {
+		log.Println("Error when clearing session:", err)
+	}
 
 	http.Redirect(res, req, "/login", 302)
 }
