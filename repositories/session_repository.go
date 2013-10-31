@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
+	"log"
 	"net/http"
 	"os"
 )
@@ -22,12 +23,14 @@ func EnableSessions() {
 	auth_key := []byte(os.Getenv("SESSION_AUTH_KEY"))
 
 	if len(auth_key) == 0 {
+		log.Println("Using temporary authentication key for session")
 		auth_key = securecookie.GenerateRandomKey(64)
 	}
 
 	encryption_key := []byte(os.Getenv("SESSION_ENCRYPTION_KEY"))
 
 	if len(encryption_key) == 0 {
+		log.Println("Using temporary encryption key for session")
 		encryption_key = securecookie.GenerateRandomKey(32)
 	}
 
