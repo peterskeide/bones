@@ -13,6 +13,8 @@ func main() {
 	repositories.Connect(config.Database())
 	defer repositories.Cleanup()
 
+	repositories.EnableSessions()
+
 	r := setupRouting()
 
 	http.Handle("/", r)

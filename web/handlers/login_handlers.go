@@ -20,8 +20,8 @@ func LoadLoginPage(res http.ResponseWriter, req *http.Request) {
 }
 
 func CreateNewSession(res http.ResponseWriter, req *http.Request) {
-	form := &forms.LoginForm{Request: req}
-	err := actions.ProcessForm(req, form)
+	form := forms.LoginForm{ResponseWriter: res, Request: req}
+	err := actions.ProcessForm(req, &form)
 
 	if err != nil {
 		actions.RenderPageWithErrors(res, newLoginContext(), err)

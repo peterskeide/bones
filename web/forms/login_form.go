@@ -6,16 +6,18 @@ import (
 	"bones/validation"
 	"code.google.com/p/go.crypto/bcrypt"
 	"errors"
+	"log"
 	"net/http"
 )
 
 var LoginFailedError = errors.New("Login failed")
 
 type LoginForm struct {
-	Request  *http.Request  `schema:"-"`
-	User     *entities.User `schema:"-"`
-	Email    string         `schema:"email"`
-	Password string         `schema:"password"`
+	ResponseWriter http.ResponseWriter `schema:"-"`
+	Request        *http.Request       `schema:"-"`
+	User           *entities.User      `schema:"-"`
+	Email          string              `schema:"email"`
+	Password       string              `schema:"password"`
 }
 
 func (f *LoginForm) Validate() error {
@@ -28,6 +30,16 @@ func (f *LoginForm) Validate() error {
 }
 
 func (f *LoginForm) Save() error {
+	err := f.findAndAuthenticateUser()
+
+	if err != nil {
+		return err
+	}
+
+	return f.createSession()
+}
+
+func (f *LoginForm) findAndAuthenticateUser() error {
 	var err error
 
 	f.User, err = repositories.Users.FindByEmail(f.Email)
@@ -46,7 +58,18 @@ func (f *LoginForm) Save() error {
 		return LoginFailedError
 	}
 
-	// TODO save session to repository, update cookie in action
+	return nil
+}
+
+func (f *LoginForm) createSession() error {
+	session := repositories.Session(f.ResponseWriter, f.Request)
+	session.SetValue("user_id", f.User.Id)
+	err := session.Save()
+
+	if err != nil {
+		log.Println("Failed to save session:", err)
+		return LoginFailedError
+	}
 
 	return nil
 }
