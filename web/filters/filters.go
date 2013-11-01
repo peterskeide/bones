@@ -36,9 +36,9 @@ func Authenticate(res http.ResponseWriter, req *http.Request, chain *RequestFilt
 
 		context.SetCurrentUser(req, user)
 		chain.next()
+	} else {
+		redirectToLogin(res, req)
 	}
-
-	redirectToLogin(res, req)
 }
 
 func redirectToLogin(res http.ResponseWriter, req *http.Request) {
