@@ -4,6 +4,7 @@ import (
 	"bones/entities"
 	"bones/repositories"
 	"bones/web/actions"
+	"bones/web/context"
 	"bones/web/forms"
 	"bones/web/templating"
 	"log"
@@ -35,7 +36,10 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 }
 
 func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
-	entity := actions.FindEntityOr404(res, req, repositories.Users, ":id")
+	// If GetInt returns an error, id will be 0 and the entity lookup will fail.
+	// Consider handling the error to avoid unnecessary database requests.
+	id, _ := context.Params(req).GetInt(":id")
+	entity := actions.FindEntityOr404(res, req, repositories.Users, id)
 
 	if user, ok := entity.(*entities.User); ok {
 		ctx := ProfileContext{templating.NewBaseContext("profile.html"), user}
@@ -51,7 +55,7 @@ func Logout(res http.ResponseWriter, req *http.Request) {
 		log.Println("Error when clearing session:", err)
 	}
 
-	http.Redirect(res, req, "/login", 302)
+	actions.RedirectToLogin(res, req)
 }
 
 func newLoginContext() *templating.BaseContext {

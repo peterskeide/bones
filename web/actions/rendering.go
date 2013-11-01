@@ -5,7 +5,6 @@ import (
 	"bones/web/templating"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 const (
@@ -38,16 +37,7 @@ func Render404(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, idParamName string) interface{} {
-	idStr := req.URL.Query().Get(idParamName)
-	id, err := strconv.Atoi(idStr)
-
-	if err != nil {
-		Render404(res, req)
-
-		return nil
-	}
-
+func FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, id int) interface{} {
 	entity, err := ef.Find(id)
 
 	if err != nil {

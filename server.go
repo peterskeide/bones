@@ -31,7 +31,7 @@ func setupRouting() *pat.Router {
 	filters.SetRouter(r)
 	handlers.SetRouter(r)
 
-	filters.Get("/users/{id:[0-9]+}/profile", handlers.LoadUserProfilePage, filters.Authenticate).Name("userProfile")
+	filters.Get("/users/{id:[0-9]+}/profile", handlers.LoadUserProfilePage, filters.Authenticate, filters.Params).Name("userProfile")
 
 	r.Get("/signup", handlers.LoadSignupPage)
 	r.Post("/signup", handlers.CreateNewUser)
