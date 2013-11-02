@@ -2,6 +2,7 @@ package filters
 
 import (
 	"bones/repositories"
+	"bones/web/actions"
 	"bones/web/context"
 	"log"
 	"net/http"
@@ -31,7 +32,7 @@ func Authenticate(res http.ResponseWriter, req *http.Request, chain *RequestFilt
 				log.Println("Error when finding user for authentication:", err)
 			}
 
-			redirectToLogin(res, req)
+			actions.RedirectToLogin(res, req)
 
 			return
 		}
@@ -39,10 +40,6 @@ func Authenticate(res http.ResponseWriter, req *http.Request, chain *RequestFilt
 		context.SetCurrentUser(req, user)
 		chain.next()
 	} else {
-		redirectToLogin(res, req)
+		actions.RedirectToLogin(res, req)
 	}
-}
-
-func redirectToLogin(res http.ResponseWriter, req *http.Request) {
-	http.Redirect(res, req, "/login", 302)
 }
