@@ -48,6 +48,16 @@ func Render401(res http.ResponseWriter) {
 	}
 }
 
+func Render500(res http.ResponseWriter, req *http.Request) {
+	res.WriteHeader(http.StatusInternalServerError)
+
+	err := templating.RenderTemplate(res, templating.NewBaseContext("500.html"))
+
+	if err != nil {
+		log.Println("Error when rendering 500 template:", err)
+	}
+}
+
 func FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, id int) interface{} {
 	entity, err := ef.Find(id)
 
@@ -56,7 +66,7 @@ func FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories
 			Render404(res, req)
 		} else {
 			log.Println("Error on entity find:", err)
-			http.Error(res, serverError, http.StatusInternalServerError)
+			Render500(res, req)
 		}
 
 		return nil
