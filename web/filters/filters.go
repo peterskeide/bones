@@ -11,7 +11,9 @@ func Params(res http.ResponseWriter, req *http.Request, chain *RequestFilterChai
 	err := context.InitParams(req)
 
 	if err != nil {
-		panic(err)
+		http.Error(res, "Bad request", http.StatusBadRequest)
+
+		return
 	}
 
 	chain.next()
