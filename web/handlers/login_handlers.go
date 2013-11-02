@@ -39,6 +39,14 @@ func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
 	// If GetInt returns an error, id will be 0 and the entity lookup will fail.
 	// Consider handling the error to avoid unnecessary database requests.
 	id, _ := context.Params(req).GetInt(":id")
+
+	// A user can only se his/her own profile
+	if context.CurrentUser(req).Id != id {
+		actions.Render401(res)
+
+		return
+	}
+
 	entity := actions.FindEntityOr404(res, req, repositories.Users, id)
 
 	if user, ok := entity.(*entities.User); ok {
