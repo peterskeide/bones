@@ -5,5 +5,5 @@ import (
 )
 
 func RedirectToLogin(res http.ResponseWriter, req *http.Request) {
-	http.Redirect(res, req, "/login", 302)
+	http.Redirect(res, req, "/login", http.StatusFound)
 }

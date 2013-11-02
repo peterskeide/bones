@@ -20,7 +20,7 @@ func CreateNewUser(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	http.Redirect(res, req, "/", 302)
+	http.Redirect(res, req, "/", http.StatusFound)
 }
 
 func newSignupContext() *templating.BaseContext {
