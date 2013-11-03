@@ -28,16 +28,16 @@ func main() {
 
 func setupRouting() *pat.Router {
 	r := pat.New()
-	filters.SetRouter(r)
+
 	handlers.SetRouter(r)
 
-	filters.Get("/users/{id:[0-9]+}/profile", handlers.LoadUserProfilePage, filters.Authenticate, filters.Params).Name("userProfile")
+	r.Get("/users/{id:[0-9]+}/profile", filters.ApplyTo(handlers.LoadUserProfilePage, filters.Authenticate, filters.Params)).Name("userProfile")
 
 	r.Get("/signup", handlers.LoadSignupPage)
 	r.Post("/signup", handlers.CreateNewUser)
 
 	r.Get("/login", handlers.LoadLoginPage)
-	filters.Post("/login", handlers.CreateNewSession, filters.Csrf)
+	r.Post("/login", filters.ApplyTo(handlers.CreateNewSession, filters.Csrf))
 	r.Get("/logout", handlers.Logout)
 
 	r.Get("/", handlers.LoadHomePage)

@@ -1,24 +1,8 @@
 package filters
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/gorilla/pat"
 	"net/http"
 )
-
-var router *pat.Router
-
-func SetRouter(r *pat.Router) {
-	router = r
-}
-
-func Get(pattern string, fn http.HandlerFunc, filters ...FilterFunc) *mux.Route {
-	return router.Get(pattern, applyFilters(fn, filters...))
-}
-
-func Post(pattern string, fn http.HandlerFunc, filters ...FilterFunc) *mux.Route {
-	return router.Post(pattern, applyFilters(fn, filters...))
-}
 
 type FilterFunc func(http.ResponseWriter, *http.Request, *RequestFilterChain)
 
@@ -39,7 +23,7 @@ func (chain *RequestFilterChain) next() {
 	}
 }
 
-func applyFilters(fn http.HandlerFunc, filters ...FilterFunc) http.HandlerFunc {
+func ApplyTo(fn http.HandlerFunc, filters ...FilterFunc) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		chain := RequestFilterChain{res, req, fn, filters[:]}
 		chain.next()
