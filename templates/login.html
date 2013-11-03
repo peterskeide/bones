@@ -3,6 +3,9 @@
 {{template "errors.html" .}}
 
 <form action="/login" method="post">
+
+	{{.CsrfTokenField}}
+
 	<fieldset>
 		<label for="email" class="label-required">Email</label>
 		<input type="email" id="email" name="email" class="input-medium">

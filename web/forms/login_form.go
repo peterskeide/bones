@@ -16,8 +16,13 @@ type LoginForm struct {
 	ResponseWriter http.ResponseWriter `schema:"-"`
 	Request        *http.Request       `schema:"-"`
 	User           *entities.User      `schema:"-"`
-	Email          string              `schema:"email"`
-	Password       string              `schema:"password"`
+	// Need to include this because of gorilla/schema.
+	// Schema should really ignore this field if it is
+	// not declared in the struct or set to "-".
+	// However, it currently returns an error on decode
+	CsrfToken string `schema:"CsrfToken"`
+	Email     string `schema:"email"`
+	Password  string `schema:"password"`
 }
 
 func (f *LoginForm) Validate() error {

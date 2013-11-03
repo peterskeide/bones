@@ -43,3 +43,22 @@ func Authenticate(res http.ResponseWriter, req *http.Request, chain *RequestFilt
 		actions.RedirectToLogin(res, req)
 	}
 }
+
+func Csrf(res http.ResponseWriter, req *http.Request, chain *RequestFilterChain) {
+	session := repositories.Session(res, req)
+	sessionToken, ok := session.Value("CsrfToken").(string)
+
+	if ok {
+		formToken := req.FormValue("CsrfToken")
+
+		if sessionToken == "" || sessionToken != formToken {
+			http.Error(res, "Forbidden", http.StatusForbidden)
+
+			return
+		}
+
+		chain.next()
+	} else {
+		http.Error(res, "Forbidden", http.StatusForbidden)
+	}
+}

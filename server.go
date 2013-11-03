@@ -37,7 +37,7 @@ func setupRouting() *pat.Router {
 	r.Post("/signup", handlers.CreateNewUser)
 
 	r.Get("/login", handlers.LoadLoginPage)
-	r.Post("/login", handlers.CreateNewSession)
+	filters.Post("/login", handlers.CreateNewSession, filters.Csrf)
 	r.Get("/logout", handlers.Logout)
 
 	r.Get("/", handlers.LoadHomePage)
