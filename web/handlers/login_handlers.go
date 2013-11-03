@@ -18,15 +18,9 @@ type ProfileContext struct {
 }
 
 func LoadLoginPage(res http.ResponseWriter, req *http.Request) {
-	ctx, err := newLoginContext(res, req)
-
-	if err != nil {
-		http.Error(res, "Internal server error", http.StatusInternalServerError)
-
-		return
+	if ctx := actions.FormContextOr500(res, req, "login.html"); ctx != nil {
+		actions.RenderPage(res, ctx)
 	}
-
-	actions.RenderPage(res, ctx)
 }
 
 func CreateNewSession(res http.ResponseWriter, req *http.Request) {
@@ -34,15 +28,9 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 	err := actions.ProcessForm(req, &form)
 
 	if err != nil {
-		ctx, err := newLoginContext(res, req)
-
-		if err != nil {
-			http.Error(res, "Internal server error", http.StatusInternalServerError)
-
-			return
+		if ctx := actions.FormContextOr500(res, req, "login.html"); ctx != nil {
+			actions.RenderPageWithErrors(res, ctx, err)
 		}
-
-		actions.RenderPageWithErrors(res, ctx, err)
 
 		return
 	}
@@ -80,9 +68,4 @@ func Logout(res http.ResponseWriter, req *http.Request) {
 	}
 
 	actions.RedirectToLogin(res, req)
-}
-
-func newLoginContext(res http.ResponseWriter, req *http.Request) (*templating.FormContext, error) {
-	base := templating.NewBaseContext("login.html")
-	return templating.NewFormContext(res, req, base)
 }
