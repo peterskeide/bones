@@ -1,21 +1,21 @@
 package handlers
 
 import (
-	"bones/web/actions"
+	"bones/web/shortcuts"
 	"bones/web/forms"
 	"bones/web/templating"
 	"net/http"
 )
 
 func LoadSignupPage(res http.ResponseWriter, req *http.Request) {
-	actions.RenderPage(res, newSignupContext())
+	shortcuts.RenderPage(res, newSignupContext())
 }
 
 func CreateNewUser(res http.ResponseWriter, req *http.Request) {
-	err := actions.ProcessForm(req, new(forms.SignupForm))
+	err := shortcuts.ProcessForm(req, new(forms.SignupForm))
 
 	if err != nil {
-		actions.RenderPageWithErrors(res, newSignupContext(), err)
+		shortcuts.RenderPageWithErrors(res, newSignupContext(), err)
 
 		return
 	}

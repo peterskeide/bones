@@ -3,7 +3,7 @@ package handlers
 import (
 	"bones/entities"
 	"bones/repositories"
-	"bones/web/actions"
+	"bones/web/shortcuts"
 	"bones/web/templating"
 	"errors"
 	"log"
@@ -26,5 +26,5 @@ func LoadHomePage(res http.ResponseWriter, req *http.Request) {
 		ctx.Users = users
 	}
 
-	actions.RenderPage(res, ctx)
+	shortcuts.RenderPage(res, ctx)
 }

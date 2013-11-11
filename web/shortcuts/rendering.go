@@ -1,4 +1,4 @@
-package actions
+package shortcuts
 
 import (
 	"bones/repositories"

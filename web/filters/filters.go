@@ -2,7 +2,7 @@ package filters
 
 import (
 	"bones/repositories"
-	"bones/web/actions"
+	"bones/web/shortcuts"
 	"bones/web/context"
 	"log"
 	"net/http"
@@ -32,7 +32,7 @@ func Authenticate(res http.ResponseWriter, req *http.Request, chain *RequestFilt
 				log.Println("Error when finding user for authentication:", err)
 			}
 
-			actions.RedirectToLogin(res, req)
+			shortcuts.RedirectToLogin(res, req)
 
 			return
 		}
@@ -40,7 +40,7 @@ func Authenticate(res http.ResponseWriter, req *http.Request, chain *RequestFilt
 		context.SetCurrentUser(req, user)
 		chain.next()
 	} else {
-		actions.RedirectToLogin(res, req)
+		shortcuts.RedirectToLogin(res, req)
 	}
 }
 

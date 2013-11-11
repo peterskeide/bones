@@ -1,4 +1,4 @@
-package actions
+package shortcuts
 
 import (
 	"net/http"
