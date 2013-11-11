@@ -15,8 +15,8 @@ const (
 )
 
 var connStr = flag.String("c", "", "String to use when connecting to database")
-var filename = flag.String("f", initFile, "Basename of sql file to execute, relative to script directory. If not given, all the scripts listed in database.init will be executed")
-var scriptDir = flag.String("d", "./db/scripts", "Name of directory with sql scripts to execute")
+var filename = flag.String("f", initFile, "Name of sql file to execute, relative to script directory. If not given, all the scripts listed in database.init will be executed")
+var scriptDir = flag.String("d", "./db/scripts", "Name of directory with sql scripts")
 var filenames []string
 
 func main() {
