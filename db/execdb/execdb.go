@@ -79,8 +79,8 @@ func withTx(fn func(*sql.Tx) error) {
 }
 
 func execFiles(tx *sql.Tx) error {
-	for _, basename := range filenames {
-		filename := filepath.Join(*scriptDir, basename)
+	for _, relname := range filenames {
+		filename := filepath.Join(*scriptDir, relname)
 
 		err := execFile(filename, tx)
 
