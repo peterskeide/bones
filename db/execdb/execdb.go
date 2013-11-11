@@ -6,15 +6,17 @@ import (
 	"fmt"
 	_ "github.com/lib/pq"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
 const (
-	initFile string = "database.init"
+	initFile      string = "database.init"
+	connStrEnvVar string = "DATABASE_URL"
 )
 
-var connStr = flag.String("c", "", "String to use when connecting to database")
+var connStr = flag.String("c", connStrEnvVar, "String to use when connecting to database")
 var filename = flag.String("f", initFile, "Name of sql file to execute, relative to script directory. If not given, all the scripts listed in database.init will be executed")
 var scriptDir = flag.String("d", "./db/scripts", "Name of directory with sql scripts")
 var filenames []string
@@ -50,7 +52,15 @@ func getFilenamesFromInitFile() {
 }
 
 func withTx(fn func(*sql.Tx) error) {
-	db, err := sql.Open("postgres", *connStr)
+	var dataSourceName string
+
+	if *connStr == connStrEnvVar {
+		dataSourceName = os.Getenv(connStrEnvVar)
+	} else {
+		dataSourceName = *connStr
+	}
+
+	db, err := sql.Open("postgres", dataSourceName)
 
 	if err != nil {
 		panic(err)
