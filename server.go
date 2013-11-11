@@ -2,7 +2,6 @@ package main
 
 import (
 	"bones/config"
-	_ "bones/db/execdb"
 	"bones/repositories"
 	"bones/web/filters"
 	"bones/web/handlers"
