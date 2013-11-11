@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/pat"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -21,9 +22,9 @@ func main() {
 	http.Handle("/", r)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
-	log.Println("Starting server on port 8080")
-
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	port := portFromEnvOrDefault()
+	log.Println("Starting server on port", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func setupRouting() *pat.Router {
@@ -43,4 +44,14 @@ func setupRouting() *pat.Router {
 	r.Get("/", handlers.LoadHomePage)
 
 	return r
+}
+
+func portFromEnvOrDefault() string {
+	port := os.Getenv("PORT")
+
+	if port != "" {
+		return port
+	}
+
+	return "8080"
 }
