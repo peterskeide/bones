@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	repositories.Connect(config.Database())
+	repositories.Connect(config.DatabaseConnectionString())
 	defer repositories.Cleanup()
 
 	repositories.EnableSessions()
