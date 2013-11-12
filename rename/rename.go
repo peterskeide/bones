@@ -62,7 +62,11 @@ func rewriteImportsForFile(path string) error {
 	}
 
 	var buf bytes.Buffer
-	printer.Fprint(&buf, fset, file)
+
+	mode := printer.UseSpaces
+	mode |= printer.TabIndent
+
+	(&printer.Config{Mode: mode, Tabwidth: 8}).Fprint(&buf, fset, file)
 
 	err = ioutil.WriteFile(path, buf.Bytes(), 0)
 
