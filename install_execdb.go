@@ -3,5 +3,5 @@
 package main
 
 import (
-	_ "bones/db/execdb"
+	_ "bones/tools/execdb"
 )
