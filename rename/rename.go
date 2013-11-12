@@ -50,7 +50,7 @@ func handleFile(path string, info os.FileInfo, err error) error {
 func rewriteImportsForFile(path string) error {
 	fset := token.NewFileSet()
 
-	file, err := parser.ParseFile(fset, path, nil, parser.ImportsOnly)
+	file, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
 
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func rewriteImportsForFile(path string) error {
 		return err
 	}
 
-	fmt.Printf("Updated imports for %s", path)
+	fmt.Printf("Updated imports for %s\n", path)
 
 	return nil
 }
