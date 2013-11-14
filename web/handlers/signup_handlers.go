@@ -1,21 +1,25 @@
 package handlers
 
 import (
-	"bones/web/shortcuts"
 	"bones/web/forms"
+	"bones/web/services"
 	"bones/web/templating"
 	"net/http"
 )
 
-func LoadSignupPage(res http.ResponseWriter, req *http.Request) {
-	shortcuts.RenderPage(res, newSignupContext())
+type SignupHandler struct {
+	services.Shortcuts
 }
 
-func CreateNewUser(res http.ResponseWriter, req *http.Request) {
-	err := shortcuts.ProcessForm(req, new(forms.SignupForm))
+func (h *SignupHandler) LoadSignupPage(res http.ResponseWriter, req *http.Request) {
+	h.RenderPage(res, newSignupContext())
+}
+
+func (h *SignupHandler) CreateNewUser(res http.ResponseWriter, req *http.Request) {
+	err := h.ProcessForm(req, new(forms.SignupForm))
 
 	if err != nil {
-		shortcuts.RenderPageWithErrors(res, newSignupContext(), err)
+		h.RenderPageWithErrors(res, newSignupContext(), err)
 
 		return
 	}

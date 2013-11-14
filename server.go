@@ -5,11 +5,28 @@ import (
 	"bones/repositories"
 	"bones/web/filters"
 	"bones/web/handlers"
+	"bones/web/services"
+	"bones/web/templating"
 	"github.com/gorilla/pat"
 	"log"
 	"net/http"
 	"os"
 )
+
+// Router
+var r *pat.Router
+
+// Services
+var templateRenderer templating.TemplateRenderer
+var shortcuts services.Shortcuts
+
+// Filters
+var f *filters.Filters
+
+// Handlers
+var homeHandler *handlers.HomeHandler
+var loginHandler *handlers.LoginHandler
+var signupHandler *handlers.SignupHandler
 
 func main() {
 	repositories.Connect(config.DatabaseConnectionString())
@@ -17,7 +34,9 @@ func main() {
 
 	repositories.EnableSessions()
 
-	r := setupRouting()
+	setupDependencies()
+
+	setupRouting()
 
 	http.Handle("/", r)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
@@ -27,23 +46,31 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-func setupRouting() *pat.Router {
-	r := pat.New()
-
+func setupDependencies() {
+	r = pat.New()
 	handlers.SetRouter(r)
 
-	r.Get("/users/{id:[0-9]+}/profile", filters.ApplyTo(handlers.LoadUserProfilePage, filters.Authenticate, filters.Params)).Name("userProfile")
+	templateRenderer = templating.NewTemplateRenderer()
+	shortcuts = &services.TemplatingShortcuts{templateRenderer}
 
-	r.Get("/signup", handlers.LoadSignupPage)
-	r.Post("/signup", handlers.CreateNewUser)
+	f = &filters.Filters{shortcuts}
 
-	r.Get("/login", handlers.LoadLoginPage)
-	r.Post("/login", filters.ApplyTo(handlers.CreateNewSession, filters.Csrf))
-	r.Get("/logout", handlers.Logout)
+	homeHandler = &handlers.HomeHandler{shortcuts}
+	loginHandler = &handlers.LoginHandler{shortcuts}
+	signupHandler = &handlers.SignupHandler{shortcuts}
+}
 
-	r.Get("/", handlers.LoadHomePage)
+func setupRouting() {
+	r.Get("/users/{id:[0-9]+}/profile", filters.ApplyTo(loginHandler.LoadUserProfilePage, f.Authenticate, filters.Params)).Name("userProfile")
 
-	return r
+	r.Get("/signup", signupHandler.LoadSignupPage)
+	r.Post("/signup", signupHandler.CreateNewUser)
+
+	r.Get("/login", loginHandler.LoadLoginPage)
+	r.Post("/login", filters.ApplyTo(loginHandler.CreateNewSession, filters.Csrf))
+	r.Get("/logout", loginHandler.Logout)
+
+	r.Get("/", homeHandler.LoadHomePage)
 }
 
 func portFromEnvOrDefault() string {

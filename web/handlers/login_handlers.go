@@ -5,7 +5,7 @@ import (
 	"bones/repositories"
 	"bones/web/context"
 	"bones/web/forms"
-	"bones/web/shortcuts"
+	"bones/web/services"
 	"bones/web/templating"
 	"log"
 	"net/http"
@@ -17,19 +17,23 @@ type ProfileContext struct {
 	User *entities.User
 }
 
-func LoadLoginPage(res http.ResponseWriter, req *http.Request) {
-	if ctx := shortcuts.FormContextOr500(res, req, "login.html"); ctx != nil {
-		shortcuts.RenderPage(res, ctx)
+type LoginHandler struct {
+	services.Shortcuts
+}
+
+func (h *LoginHandler) LoadLoginPage(res http.ResponseWriter, req *http.Request) {
+	if ctx := h.FormContextOr500(res, req, "login.html"); ctx != nil {
+		h.RenderPage(res, ctx)
 	}
 }
 
-func CreateNewSession(res http.ResponseWriter, req *http.Request) {
+func (h *LoginHandler) CreateNewSession(res http.ResponseWriter, req *http.Request) {
 	form := forms.LoginForm{ResponseWriter: res, Request: req}
-	err := shortcuts.ProcessForm(req, &form)
+	err := h.ProcessForm(req, &form)
 
 	if err != nil {
-		if ctx := shortcuts.FormContextOr500(res, req, "login.html"); ctx != nil {
-			shortcuts.RenderPageWithErrors(res, ctx, err)
+		if ctx := h.FormContextOr500(res, req, "login.html"); ctx != nil {
+			h.RenderPageWithErrors(res, ctx, err)
 		}
 
 		return
@@ -39,25 +43,25 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 	http.Redirect(res, req, url, http.StatusFound)
 }
 
-func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
+func (h *LoginHandler) LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
 	id, _ := context.Params(req).GetInt(":id")
 
 	// A user can only see his/her own profile
 	if context.CurrentUser(req).Id != id {
-		shortcuts.Render401(res)
+		h.Render401(res)
 
 		return
 	}
 
-	entity := shortcuts.FindEntityOr404(res, req, repositories.Users, id)
+	entity := h.FindEntityOr404(res, req, repositories.Users, id)
 
 	if user, ok := entity.(*entities.User); ok {
 		ctx := ProfileContext{templating.NewBaseContext("profile.html"), user}
-		shortcuts.RenderPage(res, &ctx)
+		h.RenderPage(res, &ctx)
 	}
 }
 
-func Logout(res http.ResponseWriter, req *http.Request) {
+func (h *LoginHandler) Logout(res http.ResponseWriter, req *http.Request) {
 	session := repositories.Session(res, req)
 	err := session.Clear()
 
@@ -65,5 +69,5 @@ func Logout(res http.ResponseWriter, req *http.Request) {
 		log.Println("Error when clearing session:", err)
 	}
 
-	shortcuts.RedirectToLogin(res, req)
+	h.RedirectToLogin(res, req)
 }

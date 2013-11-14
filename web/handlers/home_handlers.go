@@ -3,7 +3,7 @@ package handlers
 import (
 	"bones/entities"
 	"bones/repositories"
-	"bones/web/shortcuts"
+	"bones/web/services"
 	"bones/web/templating"
 	"errors"
 	"log"
@@ -15,7 +15,11 @@ type HomeContext struct {
 	Users []entities.User
 }
 
-func LoadHomePage(res http.ResponseWriter, req *http.Request) {
+type HomeHandler struct {
+	services.Shortcuts
+}
+
+func (h *HomeHandler) LoadHomePage(res http.ResponseWriter, req *http.Request) {
 	ctx := HomeContext{templating.NewBaseContext("index.html"), nil}
 	users, err := repositories.Users.All()
 
@@ -26,5 +30,5 @@ func LoadHomePage(res http.ResponseWriter, req *http.Request) {
 		ctx.Users = users
 	}
 
-	shortcuts.RenderPage(res, ctx)
+	h.RenderPage(res, ctx)
 }

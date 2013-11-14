@@ -8,7 +8,6 @@ import (
 )
 
 var templates *template.Template
-var currentTemplateRenderer TemplateRenderer
 
 type TemplateRenderer interface {
 	RenderTemplate(wr io.Writer, ctx TemplateContext) error
@@ -28,29 +27,14 @@ type TemplateContext interface {
 	Name() string
 }
 
-// Bring your own TemplateRenderer,
-// e.g. for testing
-func SetTemplateRenderer(tr TemplateRenderer) {
-	currentTemplateRenderer = tr
-}
-
-func initTemplateRenderer() {
+func NewTemplateRenderer() TemplateRenderer {
 	if config.Env().IsProduction() {
-		currentTemplateRenderer = &cachingTemplateRenderer{templates}
-		return
+		return &cachingTemplateRenderer{templates}
 	}
 
 	log.Println("Using reloading template renderer")
 
-	currentTemplateRenderer = &reloadingTemplateRenderer{}
-}
-
-func RenderTemplate(wr io.Writer, ctx TemplateContext) error {
-	if currentTemplateRenderer == nil {
-		initTemplateRenderer()
-	}
-
-	return currentTemplateRenderer.RenderTemplate(wr, ctx)
+	return &reloadingTemplateRenderer{}
 }
 
 type cachingTemplateRenderer struct {
