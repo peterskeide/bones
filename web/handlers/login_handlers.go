@@ -3,9 +3,9 @@ package handlers
 import (
 	"bones/entities"
 	"bones/repositories"
-	"bones/web/shortcuts"
 	"bones/web/context"
 	"bones/web/forms"
+	"bones/web/shortcuts"
 	"bones/web/templating"
 	"log"
 	"net/http"
@@ -40,11 +40,9 @@ func CreateNewSession(res http.ResponseWriter, req *http.Request) {
 }
 
 func LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
-	// If GetInt returns an error, id will be 0 and the entity lookup will fail.
-	// Consider handling the error to avoid unnecessary database requests.
 	id, _ := context.Params(req).GetInt(":id")
 
-	// A user can only se his/her own profile
+	// A user can only see his/her own profile
 	if context.CurrentUser(req).Id != id {
 		shortcuts.Render401(res)
 
