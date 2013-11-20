@@ -6,3 +6,4 @@ github.com/gorilla/mux
 github.com/gorilla/sessions
 github.com/gorilla/securecookie
 code.google.com/p/go.crypto/bcrypt
+github.com/peterskeide/veil

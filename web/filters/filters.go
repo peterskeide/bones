@@ -17,7 +17,7 @@ func (f *Filters) Authenticate(res http.ResponseWriter, req *http.Request, chain
 	value := session.Value("user_id")
 
 	if id, ok := value.(int); ok {
-		user, err := repositories.Users.FindById(id)
+		user, err := repositories.Users().FindById(id)
 
 		if err != nil {
 			if err != repositories.NotFoundError {

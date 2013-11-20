@@ -47,7 +47,7 @@ func (f *LoginForm) Save() error {
 func (f *LoginForm) findAndAuthenticateUser() error {
 	var err error
 
-	f.User, err = repositories.Users.FindByEmail(f.Email)
+	f.User, err = repositories.Users().FindByEmail(f.Email)
 
 	if err != nil {
 		if err == repositories.NotFoundError {

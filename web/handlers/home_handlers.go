@@ -21,7 +21,7 @@ type HomeHandler struct {
 
 func (h *HomeHandler) LoadHomePage(res http.ResponseWriter, req *http.Request) {
 	ctx := HomeContext{templating.NewBaseContext("index.html"), nil}
-	users, err := repositories.Users.All()
+	users, err := repositories.Users().All()
 
 	if err != nil {
 		log.Println("Error loading users from repository:", err)

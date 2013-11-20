@@ -53,7 +53,7 @@ func (h *LoginHandler) LoadUserProfilePage(res http.ResponseWriter, req *http.Re
 		return
 	}
 
-	entity := h.FindEntityOr404(res, req, repositories.Users, id)
+	entity := h.FindEntityOr404(res, req, repositories.Users(), id)
 
 	if user, ok := entity.(*entities.User); ok {
 		ctx := ProfileContext{templating.NewBaseContext("profile.html"), user}

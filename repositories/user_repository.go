@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"bones/entities"
+	"github.com/peterskeide/veil"
 )
 
 type UserRepository interface {
@@ -12,23 +13,27 @@ type UserRepository interface {
 	All() ([]entities.User, error)
 }
 
-var Users UserRepository = new(SqlUserRepository)
+func Users() UserRepository {
+	return &SqlUserRepository{veil.New(db)}
+}
 
-type SqlUserRepository struct{}
+type SqlUserRepository struct {
+	veil.Veil
+}
 
 func (r SqlUserRepository) Insert(user *entities.User) error {
-	return exec("INSERT INTO users (email, password) VALUES ($1, $2)", user.Email, user.Password)
+	return r.Exec("INSERT INTO users (email, password) VALUES ($1, $2)", user.Email, user.Password)
 }
 
 func (r SqlUserRepository) FindByEmail(email string) (*entities.User, error) {
 	rc := new(usersRowCollector)
-	err := queryRow(rc, "SELECT * FROM users WHERE email = $1 LIMIT 1", email)
+	err := r.QueryRow(rc, "SELECT * FROM users WHERE email = $1 LIMIT 1", email)
 	return rc.firstOrErr(err)
 }
 
 func (r SqlUserRepository) FindById(id int) (*entities.User, error) {
 	rc := new(usersRowCollector)
-	err := queryRow(rc, "SELECT * FROM users WHERE id = $1 LIMIT 1", id)
+	err := r.QueryRow(rc, "SELECT * FROM users WHERE id = $1 LIMIT 1", id)
 	return rc.firstOrErr(err)
 }
 
@@ -38,7 +43,7 @@ func (r SqlUserRepository) Find(id int) (interface{}, error) {
 
 func (r SqlUserRepository) All() ([]entities.User, error) {
 	rc := new(usersRowCollector)
-	err := query(rc, "SELECT * FROM users")
+	err := r.Query(rc, "SELECT * FROM users")
 	return rc.allOrErr(err)
 }
 
@@ -46,7 +51,7 @@ type usersRowCollector struct {
 	users []entities.User
 }
 
-func (rc *usersRowCollector) collectRow(rs rowScanner) error {
+func (rc *usersRowCollector) CollectRow(rs veil.RowScanner) error {
 	user := entities.User{}
 
 	err := rs.Scan(&user.Id, &user.Password, &user.Email)
