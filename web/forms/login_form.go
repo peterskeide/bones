@@ -13,10 +13,10 @@ import (
 var LoginFailedError = errors.New("Login failed")
 
 type LoginForm struct {
-	ResponseWriter http.ResponseWriter `schema:"-"`
-	Request        *http.Request       `schema:"-"`
-	Users          repositories.UserRepository
-	User           *entities.User `schema:"-"`
+	ResponseWriter http.ResponseWriter         `schema:"-"`
+	Request        *http.Request               `schema:"-"`
+	Users          repositories.UserRepository `schema:"-"`
+	User           *entities.User              `schema:"-"`
 	// Need to include this because of gorilla/schema.
 	// Schema should really ignore this field if it is
 	// not declared in the struct or set to "-".
