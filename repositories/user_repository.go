@@ -47,10 +47,6 @@ func (r SqlUserRepository) All() ([]entities.User, error) {
 	return rc.allOrErr(err)
 }
 
-func (r SqlUserRepository) Close() error {
-	return r.Veil.Close()
-}
-
 type usersRowCollector struct {
 	users []entities.User
 }
