@@ -10,6 +10,7 @@ import (
 
 type Filters struct {
 	services.Shortcuts
+	Users repositories.UserRepository
 }
 
 func (f *Filters) Authenticate(res http.ResponseWriter, req *http.Request, chain *RequestFilterChain) {
@@ -17,7 +18,7 @@ func (f *Filters) Authenticate(res http.ResponseWriter, req *http.Request, chain
 	value := session.Value("user_id")
 
 	if id, ok := value.(int); ok {
-		user, err := repositories.Users().FindById(id)
+		user, err := f.Users.FindById(id)
 
 		if err != nil {
 			if err != repositories.NotFoundError {

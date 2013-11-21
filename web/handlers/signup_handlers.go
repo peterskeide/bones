@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bones/repositories"
 	"bones/web/forms"
 	"bones/web/services"
 	"bones/web/templating"
@@ -9,6 +10,7 @@ import (
 
 type SignupHandler struct {
 	services.Shortcuts
+	Users repositories.UserRepository
 }
 
 func (h *SignupHandler) LoadSignupPage(res http.ResponseWriter, req *http.Request) {
@@ -16,7 +18,8 @@ func (h *SignupHandler) LoadSignupPage(res http.ResponseWriter, req *http.Reques
 }
 
 func (h *SignupHandler) CreateNewUser(res http.ResponseWriter, req *http.Request) {
-	err := h.ProcessForm(req, new(forms.SignupForm))
+	form := forms.SignupForm{Users: h.Users}
+	err := h.ProcessForm(req, &form)
 
 	if err != nil {
 		h.RenderPageWithErrors(res, newSignupContext(), err)

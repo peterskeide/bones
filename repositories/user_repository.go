@@ -13,8 +13,8 @@ type UserRepository interface {
 	All() ([]entities.User, error)
 }
 
-func Users() UserRepository {
-	return &SqlUserRepository{veil.New(db)}
+func NewUserRepository() UserRepository {
+	return &SqlUserRepository{dbveil}
 }
 
 type SqlUserRepository struct {
@@ -45,6 +45,10 @@ func (r SqlUserRepository) All() ([]entities.User, error) {
 	rc := new(usersRowCollector)
 	err := r.Query(rc, "SELECT * FROM users")
 	return rc.allOrErr(err)
+}
+
+func (r SqlUserRepository) Close() error {
+	return r.Veil.Close()
 }
 
 type usersRowCollector struct {

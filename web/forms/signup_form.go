@@ -8,10 +8,11 @@ import (
 )
 
 type SignupForm struct {
-	Email                string `schema:"email"`
-	EmailConfirmation    string `schema:"email-confirmation"`
-	Password             string `schema:"password"`
-	PasswordConfirmation string `schema:"password-confirmation"`
+	Users                repositories.UserRepository `schema:"_"`
+	Email                string                      `schema:"email"`
+	EmailConfirmation    string                      `schema:"email-confirmation"`
+	Password             string                      `schema:"password"`
+	PasswordConfirmation string                      `schema:"password-confirmation"`
 }
 
 func (f *SignupForm) Validate() error {
@@ -24,7 +25,7 @@ func (f *SignupForm) Validate() error {
 }
 
 func (f *SignupForm) Save() error {
-	_, err := repositories.Users().FindByEmail(f.Email)
+	_, err := f.Users.FindByEmail(f.Email)
 
 	if err != nil {
 		if err == repositories.NotFoundError {
@@ -46,5 +47,5 @@ func (f *SignupForm) saveNewUser() error {
 		return err
 	}
 
-	return repositories.Users().Insert(&user)
+	return f.Users.Insert(&user)
 }

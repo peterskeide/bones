@@ -19,6 +19,7 @@ type ProfileContext struct {
 
 type LoginHandler struct {
 	services.Shortcuts
+	Users repositories.UserRepository
 }
 
 func (h *LoginHandler) LoadLoginPage(res http.ResponseWriter, req *http.Request) {
@@ -28,7 +29,7 @@ func (h *LoginHandler) LoadLoginPage(res http.ResponseWriter, req *http.Request)
 }
 
 func (h *LoginHandler) CreateNewSession(res http.ResponseWriter, req *http.Request) {
-	form := forms.LoginForm{ResponseWriter: res, Request: req}
+	form := forms.LoginForm{ResponseWriter: res, Request: req, Users: h.Users}
 	err := h.ProcessForm(req, &form)
 
 	if err != nil {
@@ -53,7 +54,7 @@ func (h *LoginHandler) LoadUserProfilePage(res http.ResponseWriter, req *http.Re
 		return
 	}
 
-	entity := h.FindEntityOr404(res, req, repositories.Users(), id)
+	entity := h.FindEntityOr404(res, req, h.Users, id)
 
 	if user, ok := entity.(*entities.User); ok {
 		ctx := ProfileContext{templating.NewBaseContext("profile.html"), user}

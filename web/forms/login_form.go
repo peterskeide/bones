@@ -15,7 +15,8 @@ var LoginFailedError = errors.New("Login failed")
 type LoginForm struct {
 	ResponseWriter http.ResponseWriter `schema:"-"`
 	Request        *http.Request       `schema:"-"`
-	User           *entities.User      `schema:"-"`
+	Users          repositories.UserRepository
+	User           *entities.User `schema:"-"`
 	// Need to include this because of gorilla/schema.
 	// Schema should really ignore this field if it is
 	// not declared in the struct or set to "-".
@@ -47,7 +48,7 @@ func (f *LoginForm) Save() error {
 func (f *LoginForm) findAndAuthenticateUser() error {
 	var err error
 
-	f.User, err = repositories.Users().FindByEmail(f.Email)
+	f.User, err = f.Users.FindByEmail(f.Email)
 
 	if err != nil {
 		if err == repositories.NotFoundError {

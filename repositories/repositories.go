@@ -3,10 +3,12 @@ package repositories
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
+	"github.com/peterskeide/veil"
 	"log"
 )
 
 var db *sql.DB
+var dbveil veil.Veil
 
 var NotFoundError = sql.ErrNoRows
 
@@ -24,11 +26,24 @@ func Connect(conninfo string) {
 		panic(err)
 	}
 
+	dbveil = veil.New(db)
+
 	log.Println("Connected to database")
 }
 
 func Cleanup() {
-	db.Close()
+	err := dbveil.Close()
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = db.Close()
+
+	if err != nil {
+		log.Println(err)
+	}
+
 	log.Println("Closed database connection")
 }
 

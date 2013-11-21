@@ -20,6 +20,9 @@ var r *pat.Router
 var templateRenderer templating.TemplateRenderer
 var shortcuts services.Shortcuts
 
+// Repositories
+var userRepository repositories.UserRepository
+
 // Filters
 var f *filters.Filters
 
@@ -53,11 +56,13 @@ func setupDependencies() {
 	templateRenderer = templating.NewTemplateRenderer()
 	shortcuts = &services.TemplatingShortcuts{templateRenderer}
 
-	f = &filters.Filters{shortcuts}
+	userRepository := repositories.NewUserRepository()
 
-	homeHandler = &handlers.HomeHandler{shortcuts}
-	loginHandler = &handlers.LoginHandler{shortcuts}
-	signupHandler = &handlers.SignupHandler{shortcuts}
+	f = &filters.Filters{shortcuts, userRepository}
+
+	homeHandler = &handlers.HomeHandler{shortcuts, userRepository}
+	loginHandler = &handlers.LoginHandler{shortcuts, userRepository}
+	signupHandler = &handlers.SignupHandler{shortcuts, userRepository}
 }
 
 func setupRouting() {
