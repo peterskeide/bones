@@ -21,6 +21,7 @@ type Shortcuts interface {
 	FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, id int) interface{}
 	RedirectToLogin(res http.ResponseWriter, req *http.Request)
 	ProcessForm(req *http.Request, form forms.Form) error
+	DecodeAndValidate(req *http.Request, form forms.Form) error
 	FormContextOr500(res http.ResponseWriter, req *http.Request, templateName string) *templating.FormContext
 }
 
@@ -106,6 +107,16 @@ func (s TemplatingShortcuts) ProcessForm(req *http.Request, form forms.Form) err
 	}
 
 	return form.Save()
+}
+
+func (s TemplatingShortcuts) DecodeAndValidate(req *http.Request, form forms.Form) error {
+	err := forms.DecodeForm(form, req)
+
+	if err != nil {
+		return err
+	}
+
+	return form.Validate()
 }
 
 func (s TemplatingShortcuts) FormContextOr500(res http.ResponseWriter, req *http.Request, templateName string) *templating.FormContext {

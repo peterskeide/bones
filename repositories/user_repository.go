@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"bones/entities"
+	"errors"
 	"github.com/peterskeide/veil"
 )
 
@@ -21,8 +22,22 @@ type SqlUserRepository struct {
 	veil.Veil
 }
 
+// Adds a new user record to the database.
+// Returns an error if the client attempts to
+// insert a user with an email address that is already
+// registered.
 func (r SqlUserRepository) Insert(user *entities.User) error {
-	return r.Exec("INSERT INTO users (email, password) VALUES ($1, $2)", user.Email, user.Password)
+	_, err := r.FindByEmail(user.Email)
+
+	if err != nil {
+		if err == NotFoundError {
+			return r.Exec("INSERT INTO users (email, password) VALUES ($1, $2)", user.Email, user.Password)
+		}
+
+		return err
+	}
+
+	return errors.New("A user with that email address is already registered")
 }
 
 func (r SqlUserRepository) FindByEmail(email string) (*entities.User, error) {

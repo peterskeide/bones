@@ -1,21 +1,18 @@
 package forms
 
 import (
-	"bones/entities"
-	"bones/repositories"
 	"bones/validation"
-	"errors"
+	"code.google.com/p/go.crypto/bcrypt"
 )
 
 type SignupForm struct {
-	Users                repositories.UserRepository `schema:"_"`
-	Email                string                      `schema:"email"`
-	EmailConfirmation    string                      `schema:"email-confirmation"`
-	Password             string                      `schema:"password"`
-	PasswordConfirmation string                      `schema:"password-confirmation"`
+	Email                string `schema:"email"`
+	EmailConfirmation    string `schema:"email-confirmation"`
+	Password             string `schema:"password"`
+	PasswordConfirmation string `schema:"password-confirmation"`
 }
 
-func (f *SignupForm) Validate() error {
+func (f SignupForm) Validate() error {
 	validate := validation.New()
 
 	validate.String(f.Email).NotEmpty("Email cannot be blank").Equals(f.EmailConfirmation, "Email didn't match email confirmation")
@@ -24,28 +21,17 @@ func (f *SignupForm) Validate() error {
 	return validate.Result()
 }
 
-func (f *SignupForm) Save() error {
-	_, err := f.Users.FindByEmail(f.Email)
+func (f SignupForm) EncryptedPassword() (string, error) {
+	pwd, err := bcrypt.GenerateFromPassword([]byte(f.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		if err == repositories.NotFoundError {
-			return f.saveNewUser()
-		}
-
-		return err
+		return "", err
 	}
 
-	return errors.New("A user with that email address is already registered")
+	return string(pwd), nil
 }
 
-func (f *SignupForm) saveNewUser() error {
-	user := entities.User{Email: f.Email}
-
-	err := user.SetPassword(f.Password)
-
-	if err != nil {
-		return err
-	}
-
-	return f.Users.Insert(&user)
+// TODO remove after refactor
+func (f SignupForm) Save() error {
+	return nil
 }
