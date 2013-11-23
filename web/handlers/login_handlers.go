@@ -6,6 +6,7 @@ import (
 	"bones/web/context"
 	"bones/web/forms"
 	"bones/web/services"
+	"bones/web/sessions"
 	"bones/web/templating"
 	"log"
 	"net/http"
@@ -19,29 +20,55 @@ type ProfileContext struct {
 
 type LoginHandler struct {
 	services.Shortcuts
-	Users repositories.UserRepository
+	services.Authenticator
+	Users        repositories.UserRepository
+	SessionStore sessions.SessionStore
 }
 
 func (h *LoginHandler) LoadLoginPage(res http.ResponseWriter, req *http.Request) {
-	if ctx := h.FormContextOr500(res, req, "login.html"); ctx != nil {
-		h.RenderPage(res, ctx)
-	}
+	ctx := h.TemplateContext(res, req, "login.html")
+	h.RenderPage(res, ctx)
 }
 
 func (h *LoginHandler) CreateNewSession(res http.ResponseWriter, req *http.Request) {
-	form := forms.LoginForm{ResponseWriter: res, Request: req, Users: h.Users}
-	err := h.ProcessForm(req, &form)
+	user, err := h.validateCredentialsAndLoginUser(res, req)
 
 	if err != nil {
-		if ctx := h.FormContextOr500(res, req, "login.html"); ctx != nil {
-			h.RenderPageWithErrors(res, ctx, err)
-		}
+		ctx := h.TemplateContext(res, req, "login.html")
+		h.RenderPageWithErrors(res, ctx, err)
 
 		return
 	}
 
-	url := routeURL("userProfile", "id", strconv.Itoa(form.User.Id))
+	url := routeURL("userProfile", "id", strconv.Itoa(user.Id))
 	http.Redirect(res, req, url, http.StatusFound)
+}
+
+func (h *LoginHandler) validateCredentialsAndLoginUser(res http.ResponseWriter, req *http.Request) (*entities.User, error) {
+	form := forms.LoginForm{}
+
+	err := h.DecodeAndValidate(req, &form)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := h.Authenticate(form.Email, form.Password)
+
+	if err != nil {
+		return nil, err
+	}
+
+	session := h.SessionStore.Session(res, req)
+	session.SetUserId(user.Id)
+
+	err = session.Save()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (h *LoginHandler) LoadUserProfilePage(res http.ResponseWriter, req *http.Request) {
@@ -49,7 +76,7 @@ func (h *LoginHandler) LoadUserProfilePage(res http.ResponseWriter, req *http.Re
 
 	// A user can only see his/her own profile
 	if context.CurrentUser(req).Id != id {
-		h.Render401(res)
+		h.Render401(res, req)
 
 		return
 	}
@@ -57,13 +84,13 @@ func (h *LoginHandler) LoadUserProfilePage(res http.ResponseWriter, req *http.Re
 	entity := h.FindEntityOr404(res, req, h.Users, id)
 
 	if user, ok := entity.(*entities.User); ok {
-		ctx := ProfileContext{templating.NewBaseContext("profile.html"), user}
+		ctx := ProfileContext{h.TemplateContext(res, req, "profile.html"), user}
 		h.RenderPage(res, &ctx)
 	}
 }
 
 func (h *LoginHandler) Logout(res http.ResponseWriter, req *http.Request) {
-	session := repositories.Session(res, req)
+	session := h.SessionStore.Session(res, req)
 	err := session.Clear()
 
 	if err != nil {

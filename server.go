@@ -6,6 +6,7 @@ import (
 	"bones/web/filters"
 	"bones/web/handlers"
 	"bones/web/services"
+	"bones/web/sessions"
 	"bones/web/templating"
 	"github.com/gorilla/pat"
 	"log"
@@ -19,6 +20,8 @@ var r *pat.Router
 // Services
 var templateRenderer templating.TemplateRenderer
 var shortcuts services.Shortcuts
+var authenticator services.Authenticator
+var sessionStore sessions.SessionStore
 
 // Repositories
 var userRepository repositories.UserRepository
@@ -35,7 +38,7 @@ func main() {
 	repositories.Connect(config.DatabaseConnectionString())
 	defer repositories.Cleanup()
 
-	repositories.EnableSessions()
+	sessions.Enable()
 
 	setupDependencies()
 
@@ -53,15 +56,18 @@ func setupDependencies() {
 	r = pat.New()
 	handlers.SetRouter(r)
 
-	templateRenderer = templating.NewTemplateRenderer()
-	shortcuts = &services.TemplatingShortcuts{templateRenderer}
-
 	userRepository := repositories.NewUserRepository()
 
-	f = &filters.Filters{shortcuts, userRepository}
+	authenticator = &services.EmailAuthenticator{userRepository}
+	sessionStore = &sessions.CookieSessionStore{}
+
+	templateRenderer = templating.NewTemplateRenderer()
+	shortcuts = &services.TemplatingShortcuts{templateRenderer, sessionStore}
+
+	f = &filters.Filters{shortcuts, sessionStore, userRepository}
 
 	homeHandler = &handlers.HomeHandler{shortcuts, userRepository}
-	loginHandler = &handlers.LoginHandler{shortcuts, userRepository}
+	loginHandler = &handlers.LoginHandler{shortcuts, authenticator, userRepository, sessionStore}
 	signupHandler = &handlers.SignupHandler{shortcuts, userRepository}
 }
 
@@ -72,7 +78,7 @@ func setupRouting() {
 	r.Post("/signup", signupHandler.CreateNewUser)
 
 	r.Get("/login", loginHandler.LoadLoginPage)
-	r.Post("/login", filters.ApplyTo(loginHandler.CreateNewSession, filters.Csrf))
+	r.Post("/login", filters.ApplyTo(loginHandler.CreateNewSession, f.Csrf))
 	r.Get("/logout", loginHandler.Logout)
 
 	r.Get("/", homeHandler.LoadHomePage)

@@ -21,7 +21,7 @@ type HomeHandler struct {
 }
 
 func (h *HomeHandler) LoadHomePage(res http.ResponseWriter, req *http.Request) {
-	ctx := HomeContext{templating.NewBaseContext("index.html"), nil}
+	ctx := HomeContext{h.TemplateContext(res, req, "index.html"), nil}
 	users, err := h.Users.All()
 
 	if err != nil {

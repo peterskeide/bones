@@ -15,14 +15,14 @@ type SignupHandler struct {
 }
 
 func (h *SignupHandler) LoadSignupPage(res http.ResponseWriter, req *http.Request) {
-	h.RenderPage(res, newSignupContext())
+	h.RenderPage(res, h.newSignupContext(res, req))
 }
 
 func (h *SignupHandler) CreateNewUser(res http.ResponseWriter, req *http.Request) {
 	err := h.validateInputAndCreateUser(req)
 
 	if err != nil {
-		h.RenderPageWithErrors(res, newSignupContext(), err)
+		h.RenderPageWithErrors(res, h.newSignupContext(res, req), err)
 	} else {
 		http.Redirect(res, req, "/", http.StatusFound)
 	}
@@ -51,6 +51,6 @@ func (h *SignupHandler) validateInputAndCreateUser(req *http.Request) error {
 	return h.Users.Insert(&user)
 }
 
-func newSignupContext() *templating.BaseContext {
-	return templating.NewBaseContext("signup.html")
+func (h *SignupHandler) newSignupContext(res http.ResponseWriter, req *http.Request) *templating.BaseContext {
+	return h.TemplateContext(res, req, "signup.html")
 }
