@@ -1,3 +1,3 @@
-development: user=youruser password='' host=localhost post=5432 dbname=bones_development sslmode=disable
-test: user=youruser password='' host=localhost post=5432 dbname=bones_test sslmode=disable
-production: user=youruser password='' host=localhost post=5432 dbname=bones_production sslmode=disable
+development: user=youruser password='' host=localhost port=5432 dbname=bones_development sslmode=disable
+test: user=youruser password='' host=localhost port=5432 dbname=bones_test sslmode=disable
+production: user=youruser password='' host=localhost port=5432 dbname=bones_production sslmode=disable
