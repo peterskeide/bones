@@ -9,10 +9,6 @@ import (
 
 var LoginFailedError = errors.New("Login failed")
 
-type Authenticator interface {
-	Authenticate(login string, password string) (*entities.User, error)
-}
-
 type EmailAuthenticator struct {
 	Users repositories.UserRepository
 }

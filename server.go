@@ -20,7 +20,7 @@ var r *pat.Router
 // Services
 var templateRenderer templating.TemplateRenderer
 var shortcuts services.Shortcuts
-var authenticator services.Authenticator
+var authenticator handlers.Authenticator
 var sessionStore sessions.SessionStore
 
 // Repositories

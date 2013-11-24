@@ -13,6 +13,10 @@ import (
 	"strconv"
 )
 
+type Authenticator interface {
+	Authenticate(login string, password string) (*entities.User, error)
+}
+
 type ProfileContext struct {
 	*templating.BaseContext
 	User *entities.User
@@ -20,7 +24,7 @@ type ProfileContext struct {
 
 type LoginHandler struct {
 	services.Shortcuts
-	services.Authenticator
+	Authenticator
 	Users        repositories.UserRepository
 	SessionStore sessions.SessionStore
 }
