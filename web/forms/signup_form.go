@@ -1,6 +1,7 @@
 package forms
 
 import (
+	"bones/entities"
 	"bones/validation"
 	"code.google.com/p/go.crypto/bcrypt"
 )
@@ -21,7 +22,17 @@ func (f SignupForm) Validate() error {
 	return validate.Result()
 }
 
-func (f SignupForm) EncryptedPassword() (string, error) {
+func (f SignupForm) User() (*entities.User, error) {
+	encryptedPassword, err := f.encryptPassword()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &entities.User{Email: f.Email, Password: encryptedPassword}, nil
+}
+
+func (f SignupForm) encryptPassword() (string, error) {
 	pwd, err := bcrypt.GenerateFromPassword([]byte(f.Password), bcrypt.DefaultCost)
 
 	if err != nil {
@@ -29,9 +40,4 @@ func (f SignupForm) EncryptedPassword() (string, error) {
 	}
 
 	return string(pwd), nil
-}
-
-// TODO remove after refactor
-func (f SignupForm) Save() error {
-	return nil
 }

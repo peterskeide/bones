@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"bones/entities"
 	"bones/repositories"
 	"bones/web/forms"
 	"bones/web/services"
@@ -37,18 +36,13 @@ func (h *SignupHandler) validateInputAndCreateUser(req *http.Request) error {
 		return err
 	}
 
-	encryptedPassword, err := form.EncryptedPassword()
+	user, err := form.User()
 
 	if err != nil {
 		return err
 	}
 
-	user := entities.User{
-		Email:    form.Email,
-		Password: encryptedPassword,
-	}
-
-	return h.Users.Insert(&user)
+	return h.Users.Insert(user)
 }
 
 func (h *SignupHandler) newSignupContext(res http.ResponseWriter, req *http.Request) *templating.BaseContext {
