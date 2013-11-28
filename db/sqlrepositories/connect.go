@@ -1,4 +1,4 @@
-package repositories
+package sqlrepositories
 
 import (
 	"database/sql"
@@ -9,8 +9,6 @@ import (
 
 var db *sql.DB
 var dbveil veil.Veil
-
-var NotFoundError = sql.ErrNoRows
 
 func Connect(conninfo string) {
 	var err error
@@ -45,8 +43,4 @@ func Cleanup() {
 	}
 
 	log.Println("Closed database connection")
-}
-
-type EntityFinder interface {
-	Find(id int) (interface{}, error)
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bones/config"
+	"bones/db/sqlrepositories"
 	"bones/repositories"
 	"bones/web/filters"
 	"bones/web/handlers"
@@ -35,8 +36,8 @@ var loginHandler *handlers.LoginHandler
 var signupHandler *handlers.SignupHandler
 
 func main() {
-	repositories.Connect(config.DatabaseConnectionString())
-	defer repositories.Cleanup()
+	sqlrepositories.Connect(config.DatabaseConnectionString())
+	defer sqlrepositories.Cleanup()
 
 	sessions.Enable()
 
@@ -56,7 +57,7 @@ func setupDependencies() {
 	r = pat.New()
 	handlers.SetRouter(r)
 
-	userRepository := repositories.NewUserRepository()
+	userRepository := sqlrepositories.NewUserRepository()
 
 	authenticator = &services.EmailAuthenticator{userRepository}
 	sessionStore = &sessions.CookieSessionStore{}
