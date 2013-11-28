@@ -5,8 +5,8 @@ import (
 	"errors"
 )
 
-var NotFoundError = errors.New("entity not found")
-var DuplicateEmailError = errors.New("a user with the given email address already registered")
+var NotFoundError = errors.New("Entity not found")
+var DuplicateEmailError = errors.New("This email address is already in use")
 
 type EntityFinder interface {
 	Find(id int) (interface{}, error)
