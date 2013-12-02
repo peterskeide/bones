@@ -31,5 +31,5 @@ func (h *HomeHandler) LoadHomePage(res http.ResponseWriter, req *http.Request) {
 		ctx.Users = users
 	}
 
-	h.RenderPage(res, ctx)
+	h.RenderPage(res, &ctx)
 }
