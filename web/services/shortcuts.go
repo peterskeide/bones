@@ -13,24 +13,12 @@ const (
 	serverError string = "Internal server error"
 )
 
-type Shortcuts interface {
-	RenderPage(res http.ResponseWriter, pageContext templating.TemplateContext)
-	RenderPageWithErrors(res http.ResponseWriter, pageContext templating.TemplateContext, errors ...error)
-	Render404(res http.ResponseWriter, req *http.Request)
-	Render401(res http.ResponseWriter, req *http.Request)
-	Render500(res http.ResponseWriter, req *http.Request)
-	FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, id int) interface{}
-	RedirectToLogin(res http.ResponseWriter, req *http.Request)
-	DecodeAndValidate(req *http.Request, form forms.Form) error
-	TemplateContext(res http.ResponseWriter, req *http.Request, templateName string) *templating.BaseContext
-}
-
-type TemplatingShortcuts struct {
+type Shortcuts struct {
 	templating.TemplateRenderer
 	SessionStore sessions.SessionStore
 }
 
-func (s TemplatingShortcuts) RenderPage(res http.ResponseWriter, pageContext templating.TemplateContext) {
+func (s Shortcuts) RenderPage(res http.ResponseWriter, pageContext templating.TemplateContext) {
 	err := s.RenderTemplate(res, pageContext)
 
 	if err != nil {
@@ -39,7 +27,7 @@ func (s TemplatingShortcuts) RenderPage(res http.ResponseWriter, pageContext tem
 	}
 }
 
-func (s TemplatingShortcuts) RenderPageWithErrors(res http.ResponseWriter, pageContext templating.TemplateContext, errors ...error) {
+func (s Shortcuts) RenderPageWithErrors(res http.ResponseWriter, pageContext templating.TemplateContext, errors ...error) {
 	for _, err := range errors {
 		pageContext.AddError(err)
 	}
@@ -47,7 +35,7 @@ func (s TemplatingShortcuts) RenderPageWithErrors(res http.ResponseWriter, pageC
 	s.RenderPage(res, pageContext)
 }
 
-func (s TemplatingShortcuts) Render404(res http.ResponseWriter, req *http.Request) {
+func (s Shortcuts) Render404(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusNotFound)
 
 	err := s.RenderTemplate(res, s.TemplateContext(res, req, "404.html"))
@@ -57,7 +45,7 @@ func (s TemplatingShortcuts) Render404(res http.ResponseWriter, req *http.Reques
 	}
 }
 
-func (s TemplatingShortcuts) Render401(res http.ResponseWriter, req *http.Request) {
+func (s Shortcuts) Render401(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusUnauthorized)
 
 	err := s.RenderTemplate(res, s.TemplateContext(res, req, "401.html"))
@@ -67,7 +55,7 @@ func (s TemplatingShortcuts) Render401(res http.ResponseWriter, req *http.Reques
 	}
 }
 
-func (s TemplatingShortcuts) Render500(res http.ResponseWriter, req *http.Request) {
+func (s Shortcuts) Render500(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusInternalServerError)
 
 	err := s.RenderTemplate(res, s.TemplateContext(res, req, "500.html"))
@@ -77,7 +65,7 @@ func (s TemplatingShortcuts) Render500(res http.ResponseWriter, req *http.Reques
 	}
 }
 
-func (s TemplatingShortcuts) FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, id int) interface{} {
+func (s Shortcuts) FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, id int) interface{} {
 	entity, err := ef.Find(id)
 
 	if err != nil {
@@ -94,11 +82,11 @@ func (s TemplatingShortcuts) FindEntityOr404(res http.ResponseWriter, req *http.
 	return entity
 }
 
-func (s TemplatingShortcuts) RedirectToLogin(res http.ResponseWriter, req *http.Request) {
+func (s Shortcuts) RedirectToLogin(res http.ResponseWriter, req *http.Request) {
 	http.Redirect(res, req, "/login", http.StatusFound)
 }
 
-func (s TemplatingShortcuts) DecodeAndValidate(req *http.Request, form forms.Form) error {
+func (s Shortcuts) DecodeAndValidate(req *http.Request, form forms.Form) error {
 	err := forms.DecodeForm(form, req)
 
 	if err != nil {
@@ -108,7 +96,7 @@ func (s TemplatingShortcuts) DecodeAndValidate(req *http.Request, form forms.For
 	return form.Validate()
 }
 
-func (s TemplatingShortcuts) TemplateContext(res http.ResponseWriter, req *http.Request, templateName string) *templating.BaseContext {
+func (s Shortcuts) TemplateContext(res http.ResponseWriter, req *http.Request, templateName string) *templating.BaseContext {
 	session := s.SessionStore.Session(res, req)
 	csrfToken := session.CsrfToken()
 	return &templating.BaseContext{TemplateName: templateName, CsrfToken: csrfToken}

@@ -63,7 +63,7 @@ func setupDependencies() {
 	sessionStore = &sessions.CookieSessionStore{}
 
 	templateRenderer = templating.NewTemplateRenderer()
-	shortcuts = &services.TemplatingShortcuts{templateRenderer, sessionStore}
+	shortcuts = services.Shortcuts{templateRenderer, sessionStore}
 
 	f = &filters.Filters{shortcuts, sessionStore, userRepository}
 
