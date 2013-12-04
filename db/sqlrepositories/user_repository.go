@@ -19,7 +19,7 @@ func (r UserRepository) Insert(user *entities.User) error {
 	_, err := r.FindByEmail(user.Email)
 
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == repositories.NotFoundError {
 			return r.Exec("INSERT INTO users (email, password) VALUES ($1, $2)", user.Email, user.Password)
 		}
 
