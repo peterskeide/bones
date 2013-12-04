@@ -4,14 +4,13 @@ import (
 	"bones/entities"
 	"bones/repositories"
 	"bones/web/services"
-	"bones/web/templating"
 	"errors"
 	"log"
 	"net/http"
 )
 
 type HomeContext struct {
-	*templating.BaseContext
+	*services.BaseContext
 	Users []entities.User
 }
 

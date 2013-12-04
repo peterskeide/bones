@@ -7,7 +7,6 @@ import (
 	"bones/web/forms"
 	"bones/web/services"
 	"bones/web/sessions"
-	"bones/web/templating"
 	"log"
 	"net/http"
 	"strconv"
@@ -18,7 +17,7 @@ type Authenticator interface {
 }
 
 type ProfileContext struct {
-	*templating.BaseContext
+	*services.BaseContext
 	User *entities.User
 }
 

@@ -4,7 +4,6 @@ import (
 	"bones/repositories"
 	"bones/web/forms"
 	"bones/web/services"
-	"bones/web/templating"
 	"net/http"
 )
 
@@ -45,6 +44,6 @@ func (h *SignupHandler) validateInputAndCreateUser(req *http.Request) error {
 	return h.Users.Insert(user)
 }
 
-func (h *SignupHandler) newSignupContext(res http.ResponseWriter, req *http.Request) *templating.BaseContext {
+func (h *SignupHandler) newSignupContext(res http.ResponseWriter, req *http.Request) *services.BaseContext {
 	return h.TemplateContext(res, req, "signup.html")
 }

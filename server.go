@@ -19,7 +19,7 @@ import (
 var r *pat.Router
 
 // Services
-var templateRenderer templating.TemplateRenderer
+var templateRenderer services.TemplateRenderer
 var shortcuts services.Shortcuts
 var authenticator handlers.Authenticator
 var sessionStore sessions.SessionStore
