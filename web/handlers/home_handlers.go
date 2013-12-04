@@ -3,19 +3,19 @@ package handlers
 import (
 	"bones/entities"
 	"bones/repositories"
-	"bones/web/services"
+	"bones/web/handlerutils"
 	"errors"
 	"log"
 	"net/http"
 )
 
 type HomeContext struct {
-	*services.BaseContext
+	*handlerutils.BaseContext
 	Users []entities.User
 }
 
 type HomeHandler struct {
-	services.Shortcuts
+	handlerutils.Shortcuts
 	Users repositories.UserRepository
 }
 

@@ -2,7 +2,7 @@ package templating
 
 import (
 	"bones/config"
-	"bones/web/services"
+	"bones/web/handlerutils"
 	"html/template"
 	"io"
 	"log"
@@ -10,7 +10,7 @@ import (
 
 var templates *template.Template
 
-func NewTemplateRenderer() services.TemplateRenderer {
+func NewTemplateRenderer() handlerutils.TemplateRenderer {
 	if config.Env().IsProduction() {
 		return &cachingTemplateRenderer{templates}
 	}
@@ -24,7 +24,7 @@ type cachingTemplateRenderer struct {
 	templates *template.Template
 }
 
-func (r cachingTemplateRenderer) RenderTemplate(wr io.Writer, ctx services.TemplateContext) error {
+func (r cachingTemplateRenderer) RenderTemplate(wr io.Writer, ctx handlerutils.TemplateContext) error {
 	if r.templates == nil {
 		var err error
 		r.templates, err = template.ParseGlob("./templates/*.html")
@@ -39,7 +39,7 @@ func (r cachingTemplateRenderer) RenderTemplate(wr io.Writer, ctx services.Templ
 
 type reloadingTemplateRenderer struct{}
 
-func (r reloadingTemplateRenderer) RenderTemplate(wr io.Writer, ctx services.TemplateContext) error {
+func (r reloadingTemplateRenderer) RenderTemplate(wr io.Writer, ctx handlerutils.TemplateContext) error {
 	templates, err := template.ParseGlob("./templates/*.html")
 
 	if err != nil {

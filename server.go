@@ -6,6 +6,7 @@ import (
 	"bones/repositories"
 	"bones/web/filters"
 	"bones/web/handlers"
+	"bones/web/handlerutils"
 	"bones/web/services"
 	"bones/web/sessions"
 	"bones/web/templating"
@@ -19,8 +20,8 @@ import (
 var r *pat.Router
 
 // Services
-var templateRenderer services.TemplateRenderer
-var shortcuts services.Shortcuts
+var templateRenderer handlerutils.TemplateRenderer
+var shortcuts handlerutils.Shortcuts
 var authenticator handlers.Authenticator
 var sessionStore sessions.SessionStore
 
@@ -63,7 +64,7 @@ func setupDependencies() {
 	sessionStore = &sessions.CookieSessionStore{}
 
 	templateRenderer = templating.NewTemplateRenderer()
-	shortcuts = services.Shortcuts{templateRenderer, sessionStore}
+	shortcuts = handlerutils.Shortcuts{templateRenderer, sessionStore}
 
 	f = &filters.Filters{shortcuts, sessionStore, userRepository}
 

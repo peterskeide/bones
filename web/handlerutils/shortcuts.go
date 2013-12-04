@@ -1,13 +1,9 @@
-package services
+package handlerutils
 
 import (
 	"bones/repositories"
-	"bones/validation"
 	"bones/web/forms"
 	"bones/web/sessions"
-	"fmt"
-	"html/template"
-	"io"
 	"log"
 	"net/http"
 )
@@ -15,10 +11,6 @@ import (
 const (
 	serverError string = "Internal server error"
 )
-
-type TemplateRenderer interface {
-	RenderTemplate(wr io.Writer, ctx TemplateContext) error
-}
 
 type Shortcuts struct {
 	TemplateRenderer
@@ -107,49 +99,4 @@ func (s Shortcuts) TemplateContext(res http.ResponseWriter, req *http.Request, t
 	session := s.SessionStore.Session(res, req)
 	csrfToken := session.CsrfToken()
 	return &BaseContext{TemplateName: templateName, CsrfToken: csrfToken}
-}
-
-type TemplateContext interface {
-	// Add an error that should be displayed
-	// to the user
-	AddError(err error)
-
-	// Add a notice/message that should be
-	// displayed to the user
-	AddNotice(notice string)
-
-	// Name of the (main) template that is being
-	// rendered (not header or footer templates).
-	Name() string
-}
-
-type BaseContext struct {
-	TemplateName string
-	Errors       []string
-	Notices      []string
-	CsrfToken    string
-}
-
-func (ctx *BaseContext) AddError(err error) {
-	switch t := err.(type) {
-	case *validation.ValidationError:
-		for _, message := range t.Messages {
-			ctx.Errors = append(ctx.Errors, message)
-		}
-	default:
-		ctx.Errors = append(ctx.Errors, t.Error())
-	}
-}
-
-func (ctx *BaseContext) AddNotice(notice string) {
-	ctx.Notices = append(ctx.Notices, notice)
-}
-
-func (ctx *BaseContext) Name() string {
-	return ctx.TemplateName
-}
-
-func (ctx *BaseContext) CsrfTokenField() template.HTML {
-	inputField := fmt.Sprintf(`<input type="hidden" id="crsf-token" name="CsrfToken" value="%s">`, ctx.CsrfToken)
-	return template.HTML(inputField)
 }
