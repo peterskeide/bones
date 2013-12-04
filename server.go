@@ -4,10 +4,10 @@ import (
 	"bones/config"
 	"bones/db/sqlrepositories"
 	"bones/repositories"
+	"bones/web/authentication"
 	"bones/web/filters"
 	"bones/web/handlers"
 	"bones/web/handlerutils"
-	"bones/web/services"
 	"bones/web/sessions"
 	"bones/web/templating"
 	"github.com/gorilla/pat"
@@ -60,7 +60,7 @@ func setupDependencies() {
 
 	userRepository := sqlrepositories.NewUserRepository()
 
-	authenticator = &services.EmailAuthenticator{userRepository}
+	authenticator = &authentication.EmailAuthenticator{userRepository}
 	sessionStore = &sessions.CookieSessionStore{}
 
 	templateRenderer = templating.NewTemplateRenderer()

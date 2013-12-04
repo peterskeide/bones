@@ -1,4 +1,4 @@
-package services
+package authentication
 
 import (
 	"bones/entities"
