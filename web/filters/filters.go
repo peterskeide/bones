@@ -4,14 +4,13 @@ import (
 	"bones/repositories"
 	"bones/web/context"
 	"bones/web/handlers"
-	"bones/web/sessions"
 	"log"
 	"net/http"
 )
 
 type Filters struct {
 	handlers.Shortcuts
-	SessionStore sessions.SessionStore
+	SessionStore handlers.SessionStore
 	Users        repositories.UserRepository
 }
 

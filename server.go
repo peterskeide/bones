@@ -22,7 +22,7 @@ var r *pat.Router
 var templateRenderer handlers.TemplateRenderer
 var shortcuts handlers.Shortcuts
 var authenticator handlers.Authenticator
-var sessionStore sessions.SessionStore
+var sessionStore handlers.SessionStore
 
 // Repositories
 var userRepository repositories.UserRepository

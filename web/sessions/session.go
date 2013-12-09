@@ -1,6 +1,7 @@
 package sessions
 
 import (
+	"bones/web/handlers"
 	"encoding/hex"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
@@ -38,23 +39,11 @@ func Enable() {
 	sessionStore = sessions.NewCookieStore(auth_key, encryption_key)
 }
 
-type SessionStore interface {
-	Session(res http.ResponseWriter, req *http.Request) Session
-}
-
 type CookieSessionStore struct{}
 
-func (store CookieSessionStore) Session(res http.ResponseWriter, req *http.Request) Session {
+func (store CookieSessionStore) Session(res http.ResponseWriter, req *http.Request) handlers.Session {
 	session, _ := sessionStore.Get(req, "bones_session")
 	return &CookieSession{session, res, req}
-}
-
-type Session interface {
-	SetUserId(id int)
-	UserId() int
-	CsrfToken() string
-	Clear() error
-	Save() error
 }
 
 type CookieSession struct {

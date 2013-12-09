@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"io"
+	"net/http"
 )
 
 type TemplateRenderer interface {
@@ -20,4 +21,16 @@ type TemplateContext interface {
 	// Name of the (main) template that is being
 	// rendered (not header or footer templates).
 	Name() string
+}
+
+type SessionStore interface {
+	Session(res http.ResponseWriter, req *http.Request) Session
+}
+
+type Session interface {
+	SetUserId(id int)
+	UserId() int
+	CsrfToken() string
+	Clear() error
+	Save() error
 }

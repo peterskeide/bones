@@ -3,7 +3,6 @@ package handlers
 import (
 	"bones/repositories"
 	"bones/web/forms"
-	"bones/web/sessions"
 	"log"
 	"net/http"
 )
@@ -14,7 +13,7 @@ const (
 
 type Shortcuts struct {
 	TemplateRenderer
-	SessionStore sessions.SessionStore
+	SessionStore SessionStore
 }
 
 func (s Shortcuts) RenderPage(res http.ResponseWriter, pageContext TemplateContext) {

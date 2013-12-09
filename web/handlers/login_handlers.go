@@ -5,7 +5,6 @@ import (
 	"bones/repositories"
 	"bones/web/context"
 	"bones/web/forms"
-	"bones/web/sessions"
 	"log"
 	"net/http"
 	"strconv"
@@ -24,7 +23,7 @@ type LoginHandler struct {
 	Shortcuts
 	Authenticator
 	Users        repositories.UserRepository
-	SessionStore sessions.SessionStore
+	SessionStore SessionStore
 }
 
 func (h *LoginHandler) LoadLoginPage(res http.ResponseWriter, req *http.Request) {
