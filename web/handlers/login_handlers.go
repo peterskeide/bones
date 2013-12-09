@@ -5,7 +5,6 @@ import (
 	"bones/repositories"
 	"bones/web/context"
 	"bones/web/forms"
-	"bones/web/handlerutils"
 	"bones/web/sessions"
 	"log"
 	"net/http"
@@ -17,12 +16,12 @@ type Authenticator interface {
 }
 
 type ProfileContext struct {
-	*handlerutils.BaseContext
+	*BaseContext
 	User *entities.User
 }
 
 type LoginHandler struct {
-	handlerutils.Shortcuts
+	Shortcuts
 	Authenticator
 	Users        repositories.UserRepository
 	SessionStore sessions.SessionStore

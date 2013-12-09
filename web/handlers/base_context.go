@@ -1,4 +1,4 @@
-package handlerutils
+package handlers
 
 import (
 	"bones/validation"

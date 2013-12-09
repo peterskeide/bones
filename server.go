@@ -7,7 +7,6 @@ import (
 	"bones/web/authentication"
 	"bones/web/filters"
 	"bones/web/handlers"
-	"bones/web/handlerutils"
 	"bones/web/sessions"
 	"bones/web/templating"
 	"github.com/gorilla/pat"
@@ -20,8 +19,8 @@ import (
 var r *pat.Router
 
 // Services
-var templateRenderer handlerutils.TemplateRenderer
-var shortcuts handlerutils.Shortcuts
+var templateRenderer handlers.TemplateRenderer
+var shortcuts handlers.Shortcuts
 var authenticator handlers.Authenticator
 var sessionStore sessions.SessionStore
 
@@ -64,7 +63,7 @@ func setupDependencies() {
 	sessionStore = &sessions.CookieSessionStore{}
 
 	templateRenderer = templating.NewTemplateRenderer()
-	shortcuts = handlerutils.Shortcuts{templateRenderer, sessionStore}
+	shortcuts = handlers.Shortcuts{templateRenderer, sessionStore}
 
 	f = &filters.Filters{shortcuts, sessionStore, userRepository}
 

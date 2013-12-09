@@ -3,14 +3,14 @@ package filters
 import (
 	"bones/repositories"
 	"bones/web/context"
-	"bones/web/handlerutils"
+	"bones/web/handlers"
 	"bones/web/sessions"
 	"log"
 	"net/http"
 )
 
 type Filters struct {
-	handlerutils.Shortcuts
+	handlers.Shortcuts
 	SessionStore sessions.SessionStore
 	Users        repositories.UserRepository
 }

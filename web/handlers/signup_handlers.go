@@ -3,12 +3,11 @@ package handlers
 import (
 	"bones/repositories"
 	"bones/web/forms"
-	"bones/web/handlerutils"
 	"net/http"
 )
 
 type SignupHandler struct {
-	handlerutils.Shortcuts
+	Shortcuts
 	Users repositories.UserRepository
 }
 
@@ -44,6 +43,6 @@ func (h *SignupHandler) validateInputAndCreateUser(req *http.Request) error {
 	return h.Users.Insert(user)
 }
 
-func (h *SignupHandler) newSignupContext(res http.ResponseWriter, req *http.Request) *handlerutils.BaseContext {
+func (h *SignupHandler) newSignupContext(res http.ResponseWriter, req *http.Request) *BaseContext {
 	return h.TemplateContext(res, req, "signup.html")
 }
