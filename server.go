@@ -43,10 +43,19 @@ func main() {
 
 	setupDependencies()
 
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
+
+	http.HandleFunc("/favicon.ico", func(req http.ResponseWriter, res *http.Request) {
+		http.ServeFile(req, res, "./assets/images/favicon.png")
+	})
+
+	http.HandleFunc("/robots.txt", func(req http.ResponseWriter, res *http.Request) {
+		http.ServeFile(req, res, "./assets/robots.txt")
+	})
+
 	setupRouting()
 
 	http.Handle("/", r)
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
 	port := portFromEnvOrDefault()
 	log.Println("Starting server on port", port)
