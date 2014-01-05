@@ -28,9 +28,15 @@ type SessionStore interface {
 }
 
 type Session interface {
+	AddFlashError(msg string)
+	FlashErrors() []string
+	AddFlashNotice(msg string)
+	FlashNotices() []string
+
 	SetUserId(id int)
 	UserId() int
 	CsrfToken() string
+
 	Clear() error
 	Save() error
 }

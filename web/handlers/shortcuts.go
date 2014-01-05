@@ -3,6 +3,7 @@ package handlers
 import (
 	"bones/repositories"
 	"bones/web/forms"
+	"errors"
 	"log"
 	"net/http"
 )
@@ -97,5 +98,38 @@ func (s Shortcuts) DecodeAndValidate(req *http.Request, form forms.Form) error {
 func (s Shortcuts) TemplateContext(res http.ResponseWriter, req *http.Request, templateName string) *BaseContext {
 	session := s.SessionStore.Session(res, req)
 	csrfToken := session.CsrfToken()
-	return &BaseContext{TemplateName: templateName, CsrfToken: csrfToken}
+
+	ctx := &BaseContext{TemplateName: templateName, CsrfToken: csrfToken}
+
+	flashNotices := session.FlashNotices()
+
+	for _, notice := range flashNotices {
+		ctx.AddNotice(notice)
+	}
+
+	flashErrors := session.FlashErrors()
+
+	for _, err := range flashErrors {
+		ctx.AddError(errors.New(err))
+	}
+
+	err := session.Save()
+
+	if err != nil {
+		log.Println("Error saving session when creating new TemplateContext:", err)
+	}
+
+	return ctx
+}
+
+func (s Shortcuts) AddFlashError(res http.ResponseWriter, req *http.Request, msg string) error {
+	session := s.SessionStore.Session(res, req)
+	session.AddFlashError(msg)
+	return session.Save()
+}
+
+func (s Shortcuts) AddFlashNotice(res http.ResponseWriter, req *http.Request, msg string) error {
+	session := s.SessionStore.Session(res, req)
+	session.AddFlashNotice(msg)
+	return session.Save()
 }

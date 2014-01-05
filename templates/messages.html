@@ -1,0 +1,15 @@
+{{if .Errors}}
+	<ul id="errors">
+		{{range .Errors}}
+			<li>{{.}}</li>
+		{{end}}
+	</ul>
+{{end}}
+
+{{if .Notices}}
+	<ul id="notices">
+		{{range .Notices}}
+			<li>{{.}}</li>
+		{{end}}
+	</ul>
+{{end}}

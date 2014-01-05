@@ -23,3 +23,7 @@ label {
 #errors {
 	color: red;
 }
+
+#notices {
+	color: green;
+}

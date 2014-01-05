@@ -21,6 +21,7 @@ func (h *SignupHandler) CreateNewUser(res http.ResponseWriter, req *http.Request
 	if err != nil {
 		h.RenderPageWithErrors(res, h.newSignupContext(res, req), err)
 	} else {
+		h.AddFlashNotice(res, req, "User created")
 		http.Redirect(res, req, "/", http.StatusFound)
 	}
 }

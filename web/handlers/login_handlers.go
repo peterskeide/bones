@@ -37,12 +37,16 @@ func (h *LoginHandler) CreateNewSession(res http.ResponseWriter, req *http.Reque
 	if err != nil {
 		ctx := h.TemplateContext(res, req, "login.html")
 		h.RenderPageWithErrors(res, ctx, err)
+	} else {
+		err = h.AddFlashNotice(res, req, "Login successful")
 
-		return
+		if err != nil {
+			log.Println(err)
+		}
+
+		url := routeURL("userProfile", "id", strconv.Itoa(user.Id))
+		http.Redirect(res, req, url, http.StatusFound)
 	}
-
-	url := routeURL("userProfile", "id", strconv.Itoa(user.Id))
-	http.Redirect(res, req, url, http.StatusFound)
 }
 
 func (h *LoginHandler) validateCredentialsAndLoginUser(res http.ResponseWriter, req *http.Request) (*entities.User, error) {

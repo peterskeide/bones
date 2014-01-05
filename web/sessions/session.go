@@ -12,6 +12,11 @@ import (
 
 var sessionStore sessions.Store
 
+const (
+	flashErrorsKey  = "_flash_errors"
+	flashNoticesKey = "_flash_notices"
+)
+
 // Initialize the session store with authentication
 // and encryption keys.
 //
@@ -50,6 +55,34 @@ type CookieSession struct {
 	session        *sessions.Session
 	responseWriter http.ResponseWriter
 	request        *http.Request
+}
+
+func (s *CookieSession) AddFlashError(msg string) {
+	s.session.AddFlash(msg, flashErrorsKey)
+}
+
+func (s *CookieSession) FlashErrors() []string {
+	return s.flashMessages(flashErrorsKey)
+}
+
+func (s *CookieSession) flashMessages(key string) []string {
+	flashes := s.session.Flashes(key)
+	length := len(flashes)
+	messages := make([]string, length, length)
+
+	for i, msg := range flashes {
+		messages[i] = msg.(string)
+	}
+
+	return messages
+}
+
+func (s *CookieSession) AddFlashNotice(msg string) {
+	s.session.AddFlash(msg, flashNoticesKey)
+}
+
+func (s *CookieSession) FlashNotices() []string {
+	return s.flashMessages(flashNoticesKey)
 }
 
 func (s *CookieSession) UserId() int {
