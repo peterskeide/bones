@@ -28,7 +28,7 @@ type LoginHandler struct {
 
 func (h *LoginHandler) LoadLoginPage(res http.ResponseWriter, req *http.Request) {
 	ctx := h.TemplateContext(res, req, "login.html")
-	h.RenderPage(res, ctx)
+	h.RenderPage(res, req, ctx)
 }
 
 func (h *LoginHandler) CreateNewSession(res http.ResponseWriter, req *http.Request) {
@@ -36,16 +36,11 @@ func (h *LoginHandler) CreateNewSession(res http.ResponseWriter, req *http.Reque
 
 	if err != nil {
 		ctx := h.TemplateContext(res, req, "login.html")
-		h.RenderPageWithErrors(res, ctx, err)
+		h.RenderPageWithErrors(res, req, ctx, err)
 	} else {
-		err = h.AddFlashNotice(res, req, "Login successful")
-
-		if err != nil {
-			log.Println(err)
-		}
-
+		h.AddFlashNotice(res, req, "Login successful")
 		url := routeURL("userProfile", "id", strconv.Itoa(user.Id))
-		http.Redirect(res, req, url, http.StatusFound)
+		h.redirect(res, req, url)
 	}
 }
 
@@ -67,12 +62,6 @@ func (h *LoginHandler) validateCredentialsAndLoginUser(res http.ResponseWriter, 
 	session := h.SessionStore.Session(res, req)
 	session.SetUserId(user.Id)
 
-	err = session.Save()
-
-	if err != nil {
-		return nil, err
-	}
-
 	return user, nil
 }
 
@@ -90,7 +79,7 @@ func (h *LoginHandler) LoadUserProfilePage(res http.ResponseWriter, req *http.Re
 
 	if user, ok := entity.(*entities.User); ok {
 		ctx := ProfileContext{h.TemplateContext(res, req, "profile.html"), user}
-		h.RenderPage(res, &ctx)
+		h.RenderPage(res, req, &ctx)
 	}
 }
 

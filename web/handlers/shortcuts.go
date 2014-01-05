@@ -17,51 +17,42 @@ type Shortcuts struct {
 	SessionStore SessionStore
 }
 
-func (s Shortcuts) RenderPage(res http.ResponseWriter, pageContext TemplateContext) {
-	err := s.RenderTemplate(res, pageContext)
+func (s Shortcuts) RenderPage(res http.ResponseWriter, req *http.Request, pageContext TemplateContext) {
+	session := s.SessionStore.Session(res, req)
+	err := session.Save()
+
+	if err != nil {
+		log.Println("Error saving session before rendering page:", err)
+	}
+
+	err = s.RenderTemplate(res, pageContext)
 
 	if err != nil {
 		log.Println("Error when rendering template:", err, ". Context:", pageContext)
-		http.Error(res, serverError, http.StatusInternalServerError)
 	}
 }
 
-func (s Shortcuts) RenderPageWithErrors(res http.ResponseWriter, pageContext TemplateContext, errors ...error) {
+func (s Shortcuts) RenderPageWithErrors(res http.ResponseWriter, req *http.Request, pageContext TemplateContext, errors ...error) {
 	for _, err := range errors {
 		pageContext.AddError(err)
 	}
 
-	s.RenderPage(res, pageContext)
+	s.RenderPage(res, req, pageContext)
 }
 
 func (s Shortcuts) Render404(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusNotFound)
-
-	err := s.RenderTemplate(res, s.TemplateContext(res, req, "404.html"))
-
-	if err != nil {
-		log.Println("Error when rendering 404 template:", err)
-	}
+	s.RenderPage(res, req, s.TemplateContext(res, req, "404.html"))
 }
 
 func (s Shortcuts) Render401(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusUnauthorized)
-
-	err := s.RenderTemplate(res, s.TemplateContext(res, req, "401.html"))
-
-	if err != nil {
-		log.Println("Error when rendering 401 template:", err)
-	}
+	s.RenderPage(res, req, s.TemplateContext(res, req, "401.html"))
 }
 
 func (s Shortcuts) Render500(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusInternalServerError)
-
-	err := s.RenderTemplate(res, s.TemplateContext(res, req, "500.html"))
-
-	if err != nil {
-		log.Println("Error when rendering 500 template:", err)
-	}
+	s.RenderPage(res, req, s.TemplateContext(res, req, "500.html"))
 }
 
 func (s Shortcuts) FindEntityOr404(res http.ResponseWriter, req *http.Request, ef repositories.EntityFinder, id int) interface{} {
@@ -82,7 +73,18 @@ func (s Shortcuts) FindEntityOr404(res http.ResponseWriter, req *http.Request, e
 }
 
 func (s Shortcuts) RedirectToLogin(res http.ResponseWriter, req *http.Request) {
-	http.Redirect(res, req, "/login", http.StatusFound)
+	s.redirect(res, req, "/login")
+}
+
+func (s Shortcuts) redirect(res http.ResponseWriter, req *http.Request, location string) {
+	session := s.SessionStore.Session(res, req)
+	err := session.Save()
+
+	if err != nil {
+		log.Println("Error saving session before redirecting to", location)
+	}
+
+	http.Redirect(res, req, location, http.StatusFound)
 }
 
 func (s Shortcuts) DecodeAndValidate(req *http.Request, form forms.Form) error {
@@ -113,23 +115,15 @@ func (s Shortcuts) TemplateContext(res http.ResponseWriter, req *http.Request, t
 		ctx.AddError(errors.New(err))
 	}
 
-	err := session.Save()
-
-	if err != nil {
-		log.Println("Error saving session when creating new TemplateContext:", err)
-	}
-
 	return ctx
 }
 
-func (s Shortcuts) AddFlashError(res http.ResponseWriter, req *http.Request, msg string) error {
+func (s Shortcuts) AddFlashError(res http.ResponseWriter, req *http.Request, msg string) {
 	session := s.SessionStore.Session(res, req)
 	session.AddFlashError(msg)
-	return session.Save()
 }
 
-func (s Shortcuts) AddFlashNotice(res http.ResponseWriter, req *http.Request, msg string) error {
+func (s Shortcuts) AddFlashNotice(res http.ResponseWriter, req *http.Request, msg string) {
 	session := s.SessionStore.Session(res, req)
 	session.AddFlashNotice(msg)
-	return session.Save()
 }

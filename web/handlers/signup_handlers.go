@@ -12,17 +12,17 @@ type SignupHandler struct {
 }
 
 func (h *SignupHandler) LoadSignupPage(res http.ResponseWriter, req *http.Request) {
-	h.RenderPage(res, h.newSignupContext(res, req))
+	h.RenderPage(res, req, h.newSignupContext(res, req))
 }
 
 func (h *SignupHandler) CreateNewUser(res http.ResponseWriter, req *http.Request) {
 	err := h.validateInputAndCreateUser(req)
 
 	if err != nil {
-		h.RenderPageWithErrors(res, h.newSignupContext(res, req), err)
+		h.RenderPageWithErrors(res, req, h.newSignupContext(res, req), err)
 	} else {
 		h.AddFlashNotice(res, req, "User created")
-		http.Redirect(res, req, "/", http.StatusFound)
+		h.redirect(res, req, "/")
 	}
 }
 
