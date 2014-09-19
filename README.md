@@ -17,7 +17,7 @@ Database & tables
 Copy `db/database.yaml.example` to `db/database.yaml` and update the configuration.
 
 You can install and use the included `execdb` tool to initialize the database with the required tables:
-`execdb -c "user=youruser password='yourpassword' host=localhost post=5432 dbname=bones_development sslmode=disable"`
+`execdb -c "user=youruser password='yourpassword' host=localhost port=5432 dbname=bones_development sslmode=disable"`
 
 Heroku (using Keith Rarick's buildpack)
 ---------------------------------------
